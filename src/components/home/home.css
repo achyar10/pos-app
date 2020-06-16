@@ -1,0 +1,35 @@
+.total-bayar {
+    font-size: 50pt;
+}
+.text-bayar{
+    color: rgb(34, 55, 122);
+    font-weight: bold;
+}
+
+.box-pay {
+    background-color: #fff !important;
+    border-radius: 15px !important;
+    padding: 2px;
+}
+
+.button-box {
+    background-color: #fff !important;
+    border-radius: 15px !important;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.top {
+    margin-top: -30px;
+}
+.left {
+    margin-left: -10px;
+}
+.btn-bayar {
+    margin-top: -30px;
+    height: 70px;
+    width: 280px;
+}
+.table-bayar {
+    border-radius: 15px !important;
+}
