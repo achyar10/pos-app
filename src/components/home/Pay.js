@@ -59,6 +59,15 @@ const Pay = (props) => {
         dispatch({ type: 'TRANS', payload: copyData })
     }
 
+    const updateQty = (index, val) => {
+        let copyData = [...trans]
+        if (index > -1) {
+            copyData[index].qty = parseInt(val) || 0
+            copyData[index].sub_total = copyData[index].sales * copyData[index].qty
+        }
+        dispatch({ type: 'TRANS', payload: copyData })
+    }
+
     new ScannerDetector({
         onComplete: scanner
     })
@@ -95,7 +104,7 @@ const Pay = (props) => {
                 </div>
                 <div className="col-md-6">
                     <span className="text-danger font-weight-bold">Total Bayar :</span><br />
-                    <span className="text-info font-weight-bold">Rp. </span><span className="text-info total-bayar">{numberFormat(data.sub_total)} ,-</span>
+                    <span className="text-info font-weight-bold">Rp. </span><span className="text-info total-bayar">{numberFormat(data.sub_total)}</span>
                 </div>
             </div>
             <div className="row mt-2 ml-1">
@@ -115,7 +124,7 @@ const Pay = (props) => {
                             {(trans.length > 0) ? trans.map((el, i) =>
                                 <tr key={i}>
                                     <td>{el.desc}</td>
-                                    <td>{numberFormat(el.qty)}</td>
+                                    <td><input type="number" className="form-control" min="1" value={el.qty} onChange={e => updateQty(i, e.target.value)} onKeyDown={e => (e.keyCode === 13) ? e.target.blur() : ''} /></td>
                                     <td>{numberFormat(el.sales)}</td>
                                     <td>{numberFormat(el.disc)}</td>
                                     <td>{numberFormat(el.sub_total)}</td>
