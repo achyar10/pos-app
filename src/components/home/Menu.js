@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import member from '../../assets/img/member.png'
+import memberImage from '../../assets/img/member.png'
 import history from '../../assets/img/history.png'
 import product from '../../assets/img/product.png'
 import open from '../../assets/img/open.png'
@@ -25,6 +25,7 @@ const Menu = (props) => {
     const [disable, setDisable] = useState(true)
     const [finish, setFinish] = useState(false)
     const trans = useSelector(state => state.trans)
+    const member = useSelector(state => state.member)
     const data = reduce(trans)
 
     useEffect(() => {
@@ -81,6 +82,9 @@ const Menu = (props) => {
             })
         });
         const snap = {
+            memberId: (member) ? member.memberId : null,
+            member_no: (member) ? member.member_no : null,
+            member_fullname: (member) ? member.member_fullname : null,
             payment_method: (pay === '1') ? 'CASH' : 'DEBIT/CREDIT',
             cash: (pay === '1') ? cash : 0,
             sedekah, bank, ccno: debit, code,
@@ -110,8 +114,8 @@ const Menu = (props) => {
             <div className="mt-2 text-bayar">
                 <div className="row">
                     <div className="col-md-6">
-                        <div className="card button-box text-center shadow p-3 mb-5 bg-white">
-                            <img src={member} alt="" height="70" className="mx-auto d-block" />
+                        <div className="card button-box text-center shadow p-3 mb-5 bg-white" onClick={props.member}>
+                            <img src={memberImage} alt="" height="70" className="mx-auto d-block" />
                             MEMBER
                         </div>
                     </div>

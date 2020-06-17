@@ -8,6 +8,7 @@ import './home.css'
 const Pay = (props) => {
 
     const trans = useSelector(state => state.trans)
+    const member = useSelector(state => state.member)
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -82,7 +83,7 @@ const Pay = (props) => {
                             <tr>
                                 <td>Member</td>
                                 <td>:</td>
-                                <td id="memberName">-</td>
+                                <td>{(member) ? member.member_fullname : '-'}</td>
                             </tr>
                             <tr>
                                 <td>Total Item</td>

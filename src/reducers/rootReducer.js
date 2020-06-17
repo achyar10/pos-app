@@ -1,6 +1,7 @@
 const initialState = {
     trans: [],
     total: 0,
+    member: null
 }
 
 const rootReducer = (state = initialState, action) => {
@@ -14,6 +15,11 @@ const rootReducer = (state = initialState, action) => {
             return {
                 ...state,
                 total: action.payload,
+            }
+        case 'MEMBER':
+            return {
+                ...state,
+                member: action.payload,
             }
         default:
             break;

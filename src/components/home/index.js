@@ -4,6 +4,7 @@ import Pay from './Pay'
 import Menu from './Menu'
 import Product from './Product'
 import History from './History'
+import Member from './Member'
 
 const Home = (props) => {
 
@@ -15,12 +16,16 @@ const Home = (props) => {
 
     const [show, setShow] = useState(false)
     const [show2, setShow2] = useState(false)
+    const [show3, setShow3] = useState(false)
     const handleClose = () => setShow(false)
     const handleClose2 = () => setShow2(false)
+    const handleClose3 = () => setShow3(false)
     const handleShow = () => setShow(true)
     const handleShow2 = () => setShow2(true)
+    const handleShow3 = () => setShow3(true)
     const handleModalProduct = () => handleShow()
     const handleModalProduct2 = () => handleShow2()
+    const handleModalProduct3 = () => handleShow3()
 
     const handleLogout = () => {
         localStorage.removeItem('authJwt')
@@ -40,11 +45,12 @@ const Home = (props) => {
                         <Pay />
                     </div>
                     <div className="col-md-3">
-                        <Menu redirect={handleFinish} product={handleModalProduct} history={handleModalProduct2} />
+                        <Menu redirect={handleFinish} product={handleModalProduct} history={handleModalProduct2} member={handleModalProduct3} />
                     </div>
                 </div>
                 <Product show={show} close={handleClose} />
                 <History show={show2} close={handleClose2} />
+                <Member show={show3} close={handleClose3} />
             </div>
         </div>
     )
