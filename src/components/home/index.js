@@ -15,6 +15,11 @@ const Home = (props) => {
         localStorage.removeItem('authJwt')
         props.history.push('/login')
     }
+
+    const handleFinish = () => {
+        window.location.href = '/'
+    }
+
     return (
         <div className="bck">
             <Navbar logout={handleLogout} />
@@ -24,7 +29,7 @@ const Home = (props) => {
                         <Pay />
                     </div>
                     <div className="col-md-3">
-                        <Menu />
+                        <Menu redirect={handleFinish} />
                     </div>
                 </div>
             </div>
