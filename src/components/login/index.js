@@ -35,23 +35,25 @@ const Login = (props) => {
     }
 
     return (
-        <form className="form-signin" onSubmit={handleSubmit}>
-            <div className="text-center mb-4">
-                <img className="mb-4" src={Logo} alt=""
-                    height="100" />
-                <h1 className="h3 mb-3 font-weight-normal">Dahanta POS</h1>
-            </div>
-            <div className="form-label-group">
-                <input type="text" id="nik" name="nik" className="form-control form-control-lg" placeholder="NIK" value={nik} onChange={e => setNik(e.target.value)} autoFocus />
-                <label htmlFor="nik">NIK</label>
-            </div>
-            <div className="form-label-group">
-                <input type="password" id="password" name="password" className="form-control form-control-lg" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-                <label htmlFor="password">Password</label>
-            </div>
-            <button className="btn btn-lg btn-primary btn-block" type="submit">Login</button>
-            <p className="mt-5 mb-3 text-muted text-center">Alright Reserved {new Date().getFullYear()}</p>
-        </form>
+        <div className="container-login">
+            <form className="form-signin" onSubmit={handleSubmit}>
+                <div className="text-center mb-4">
+                    <img className="mb-4" src={Logo} alt=""
+                        height="100" />
+                    <h1 className="h3 mb-3 font-weight-normal">Dahanta POS</h1>
+                </div>
+                <div className="form-label-group">
+                    <input type="text" id="nik" name="nik" className="form-control form-control-lg" placeholder="NIK" value={nik} onChange={e => setNik(e.target.value)} autoFocus />
+                    <label htmlFor="nik">NIK</label>
+                </div>
+                <div className="form-label-group">
+                    <input type="password" id="password" name="password" className="form-control form-control-lg" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
+                    <label htmlFor="password">Password</label>
+                </div>
+                <button className="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+                <p className="mt-5 mb-3 text-muted text-center">Alright Reserved {new Date().getFullYear()}</p>
+            </form>
+        </div>
     )
 }
 export default Login

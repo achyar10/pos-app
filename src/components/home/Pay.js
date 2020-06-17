@@ -1,12 +1,74 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import ScannerDetector from 'js-scanner-detection'
+import { numberFormat, reduce } from '../../helpers'
+import axios from 'axios'
+import { useSelector, useDispatch } from 'react-redux'
 import './home.css'
 
 const Pay = (props) => {
+
+    const trans = useSelector(state => state.trans)
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+
+    }, [])
+
+
+    const scanner = async barcode => {
+        try {
+            const config = {
+                headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
+            }
+            const hit = await axios.post(`${process.env.REACT_APP_API_POS}/item/scan`, { barcode }, config)
+            if (hit.data.status) {
+                const item = hit.data.data
+                const index = trans.findIndex(e => e.productId === item.productId)
+                if (index === -1) {
+                    dispatch({
+                        type: 'TRANS', payload: [...trans, {
+                            productId: item.productId,
+                            barcode: item.barcode,
+                            desc: item.desc,
+                            hpp: item.hpp,
+                            sales: item.sales,
+                            qty: 1,
+                            disc: 0,
+                            sub_total: item.sales - item.disc
+                        }]
+                    })
+                } else {
+                    let copyData = [...trans]
+                    copyData[index].qty += 1
+                    copyData[index].sub_total = copyData[index].sales * copyData[index].qty
+                    dispatch({ type: 'TRANS', payload: copyData })
+                }
+            } else {
+                alert('Data produk tidak ditemukan!')
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const remove = (index) => {
+        let copyData = [...trans]
+        if (index > -1) {
+            copyData.splice(index, 1)
+        }
+        dispatch({ type: 'TRANS', payload: copyData })
+    }
+
+    new ScannerDetector({
+        onComplete: scanner
+    })
+    const data = reduce(trans)
+
     return (
         <>
             <div className="row box-pay shadow ml-1 mt-2">
                 <div className="col-md-6">
-                    <table className="text-bayar">
+                    <table className="text-bayar mt-2">
                         <tbody>
                             <tr>
                                 <td>Member</td>
@@ -16,7 +78,7 @@ const Pay = (props) => {
                             <tr>
                                 <td>Total Item</td>
                                 <td>:</td>
-                                <td id="totalItem">0</td>
+                                <td>{numberFormat(data.qty)}</td>
                             </tr>
                             <tr>
                                 <td>Diskon %</td>
@@ -26,19 +88,19 @@ const Pay = (props) => {
                             <tr>
                                 <td>Total Potongan</td>
                                 <td>:</td>
-                                <td>Rp. <span id="totalPot">0</span></td>
+                                <td>Rp. 0</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div className="col-md-6">
                     <span className="text-danger font-weight-bold">Total Bayar :</span><br />
-                    <span className="text-info font-weight-bold">Rp. </span><span className="text-info total-bayar">0,-</span>
+                    <span className="text-info font-weight-bold">Rp. </span><span className="text-info total-bayar">{numberFormat(data.sub_total)} ,-</span>
                 </div>
             </div>
             <div className="row mt-2 ml-1">
-                <div className="table-responsive table-bayar">
-                    <table className="table table-hover">
+                <div className="table-responsive table-bayar over-flow">
+                    <table className="table">
                         <thead className="bg-danger text-white">
                             <tr>
                                 <th>Produk</th>
@@ -50,11 +112,19 @@ const Pay = (props) => {
                             </tr>
                         </thead>
                         <tbody className="bg-white">
-                            <tr>
-                                <td colSpan="6" align="center">Belanjaan tidak ada</td>
-                            </tr>
+                            {(trans.length > 0) ? trans.map((el, i) =>
+                                <tr key={i}>
+                                    <td>{el.desc}</td>
+                                    <td>{numberFormat(el.qty)}</td>
+                                    <td>{numberFormat(el.sales)}</td>
+                                    <td>{numberFormat(el.disc)}</td>
+                                    <td>{numberFormat(el.sub_total)}</td>
+                                    <td><span className="fa fa-times" style={{ cursor: 'pointer' }} onClick={() => remove(i)} ></span></td>
+                                </tr>
+                            ) : <tr><td colSpan="6" align="center">Belanjaan tidak ada</td></tr>}
                         </tbody>
                     </table>
+                    {(trans.length > 0) ? <button className="btn btn-warning text-white float-right">Hold Transaksi</button> : ''}
                 </div>
             </div>
         </>

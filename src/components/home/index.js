@@ -6,6 +6,7 @@ import Menu from './Menu'
 const Home = (props) => {
 
     const title = 'Home'
+
     useEffect(() => {
         document.title = title
     })
@@ -14,9 +15,8 @@ const Home = (props) => {
         localStorage.removeItem('authJwt')
         props.history.push('/login')
     }
-
     return (
-        <>
+        <div className="bck">
             <Navbar logout={handleLogout} />
             <div className="container-fluid">
                 <div className="row mt-2">
@@ -28,7 +28,7 @@ const Home = (props) => {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 export default Home

@@ -5,16 +5,19 @@ import product from '../../assets/img/product.png'
 import open from '../../assets/img/open.png'
 import clerek from '../../assets/img/clerek.png'
 import ecommerce from '../../assets/img/ecommerce.png'
+import { numberFormat, reduce } from '../../helpers'
 import { Modal, Button } from 'react-bootstrap'
+import { useSelector } from 'react-redux'
 
 const Menu = (props) => {
 
-    const [show, setShow] = useState(false);
 
+    const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-
+    const trans = useSelector(state => state.trans)
+    const data = reduce(trans)
     return (
         <>
             <div className="mt-2 text-bayar">
@@ -62,13 +65,9 @@ const Menu = (props) => {
                 </div>
                 <button className="btn btn-danger btn-lg btn-bayar shadow" onClick={handleShow}>BAYAR</button>
             </div>
-            <Modal
-                show={show}
-                onHide={handleClose}
-                backdrop="static"
-                keyboard={false}>
+            <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal title</Modal.Title>
+                    <Modal.Title>Total Bayar Rp. {numberFormat(data.sub_total)}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     I will not close if you click outside me. Don't even try to press
@@ -76,9 +75,9 @@ const Menu = (props) => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
-                        Close
+                        Batal
                     </Button>
-                    <Button variant="primary">Understood</Button>
+                    <Button variant="success">Proses</Button>
                 </Modal.Footer>
             </Modal>
         </>

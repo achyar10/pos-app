@@ -5,6 +5,11 @@ import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'font-awesome/css/font-awesome.min.css'
 import './index.css'
+import rootReducer from './reducers/rootReducer'
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
 
-ReactDOM.render(<Routes />, document.getElementById('root'));
+const store = createStore(rootReducer)
+
+ReactDOM.render(<Provider store={store}><Routes /></Provider>, document.getElementById('root'));
 serviceWorker.unregister();

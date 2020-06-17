@@ -1,18 +1,18 @@
 a {
     text-decoration: none;
 }
-body{
-    background-color: #eee;
-}
 
 .bg-light {
     background-color: rgb(34, 55, 122) !important;
 }
 
-.button-menu {
-    height: 150px;
-    width: 150px;
-    border-radius: 10px;
-    background-color: #4766B2;
-    border-color: none;
+.bck{
+    background-image: url('./assets/img/background.png');
+    background-repeat: no-repeat, repeat;
+    background-position: center;
+    background-color: #eee;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+    position:absolute;
 }

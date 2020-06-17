@@ -1,20 +1,15 @@
 :root {
-  --input-padding-x: .75rem;
-  --input-padding-y: .75rem;
+  --input-padding-x: 0.75rem;
+  --input-padding-y: 0.75rem;
 }
 
-html,
-body {
-  height: 100%;
-}
-
-body {
+.container-login {
   background-color: #fff;
+  padding-top: 40px;
+  padding-bottom: 40px;
 }
 
 .form-signin {
-  padding-top: 40px;
-  padding-bottom: 40px;
   width: 100%;
   max-width: 420px;
   padding: 15px;
@@ -41,8 +36,8 @@ body {
   line-height: 1.5;
   color: #495057;
   border: 1px solid transparent;
-  border-radius: .25rem;
-  transition: all .1s ease-in-out;
+  border-radius: 0.25rem;
+  transition: all 0.1s ease-in-out;
 }
 
 .form-label-group input::-webkit-input-placeholder {

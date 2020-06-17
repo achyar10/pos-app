@@ -33,3 +33,14 @@
 .table-bayar {
     border-radius: 15px !important;
 }
+
+.table-bayar tr:last-child td:first-child {
+  border-bottom-left-radius: 15px;
+}
+.table-bayar tr:last-child td:last-child {
+  border-bottom-right-radius: 15px;
+}
+
+.over-flow{
+    width:auto; height:400px; overflow:auto;
+}
