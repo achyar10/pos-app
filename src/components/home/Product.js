@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
+import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 
 const Product = (props) => {
 
     const [product, setProduct] = useState([])
     const [search, setSearch] = useState('')
+    const [disable, setDisable] = useState(false)
+    const [buttonName, setButtonName] = useState('Update Produk')
+    const trans = useSelector(state => state.trans)
+    const dispatch = useDispatch()
 
     useEffect(() => {
 
@@ -31,6 +36,58 @@ const Product = (props) => {
         } catch (error) {
             console.log(error)
         }
+    }
+
+    const scanner = async barcode => {
+        try {
+            const config = {
+                headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
+            }
+            const hit = await axios.post(`${process.env.REACT_APP_API_POS}/item/scan`, { barcode }, config)
+            if (hit.data.status) {
+                const item = hit.data.data
+                const index = trans.findIndex(e => e.productId === item.productId)
+                if (index === -1) {
+                    dispatch({
+                        type: 'TRANS', payload: [...trans, {
+                            productId: item.productId,
+                            barcode: item.barcode,
+                            desc: item.desc,
+                            hpp: item.hpp,
+                            sales: item.sales,
+                            qty: 1,
+                            disc: 0,
+                            sub_total: item.sales - item.disc
+                        }]
+                    })
+                } else {
+                    let copyData = [...trans]
+                    copyData[index].qty += 1
+                    copyData[index].sub_total = copyData[index].sales * copyData[index].qty
+                    dispatch({ type: 'TRANS', payload: copyData })
+                }
+            } else {
+                alert('Data produk tidak ditemukan!')
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleUpdate = () => {
+        setButtonName('Proses Update...')
+        setDisable(true)
+        const token = localStorage.getItem('authJwt')
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        }
+        axios.post(`${process.env.REACT_APP_API_POS}/item/update`, { token }, config)
+            .then(response => {
+                setButtonName('Update Produk')
+                setDisable(false)
+                alert('Update produk selesai')
+            })
+            .catch(err => console.log(err))
     }
 
 
@@ -64,7 +121,7 @@ const Product = (props) => {
                                         <td>{el.barcode}</td>
                                         <td>{el.desc}</td>
                                         <td>{el.sales}</td>
-                                        <td><button className="btn btn-sm btn-primary" onClick={props.close}>Pilih</button></td>
+                                        <td><button className="btn btn-sm btn-primary" onClick={e => scanner(el.barcode)}>Pilih</button></td>
                                     </tr>
                                 )}
                             </tbody>
@@ -73,6 +130,7 @@ const Product = (props) => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={props.close}>Tutup</Button>
+                    <Button variant="danger" className="ml-2" onClick={handleUpdate} disabled={disable}>{buttonName}</Button>
                 </Modal.Footer>
             </Modal>
         </>
