@@ -116,7 +116,7 @@ const Menu = (props) => {
                         </div>
                     </div>
                     <div className="col-md-6 left">
-                        <div className="card button-box text-center shadow p-3 mb-5 bg-white">
+                        <div className="card button-box text-center shadow p-3 mb-5 bg-white" onClick={props.history}>
                             <img src={history} alt="" height="70" className="mx-auto d-block" />
                             HISTORY
                         </div>

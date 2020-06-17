@@ -3,6 +3,7 @@ import Navbar from '../navbar'
 import Pay from './Pay'
 import Menu from './Menu'
 import Product from './Product'
+import History from './History'
 
 const Home = (props) => {
 
@@ -13,8 +14,13 @@ const Home = (props) => {
     })
 
     const [show, setShow] = useState(false)
+    const [show2, setShow2] = useState(false)
     const handleClose = () => setShow(false)
+    const handleClose2 = () => setShow2(false)
     const handleShow = () => setShow(true)
+    const handleShow2 = () => setShow2(true)
+    const handleModalProduct = () => handleShow()
+    const handleModalProduct2 = () => handleShow2()
 
     const handleLogout = () => {
         localStorage.removeItem('authJwt')
@@ -23,10 +29,6 @@ const Home = (props) => {
 
     const handleFinish = () => {
         window.location.href = '/'
-    }
-
-    const handleModalProduct = () => {
-        handleShow()
     }
 
     return (
@@ -38,10 +40,11 @@ const Home = (props) => {
                         <Pay />
                     </div>
                     <div className="col-md-3">
-                        <Menu redirect={handleFinish} product={handleModalProduct} />
+                        <Menu redirect={handleFinish} product={handleModalProduct} history={handleModalProduct2} />
                     </div>
                 </div>
                 <Product show={show} close={handleClose} />
+                <History show={show2} close={handleClose2} />
             </div>
         </div>
     )

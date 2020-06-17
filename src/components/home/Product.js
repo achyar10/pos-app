@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
+import { numberFormat } from '../../helpers'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 
@@ -120,7 +121,7 @@ const Product = (props) => {
                                     <tr key={i}>
                                         <td>{el.barcode}</td>
                                         <td>{el.desc}</td>
-                                        <td>{el.sales}</td>
+                                        <td>{numberFormat(el.sales)}</td>
                                         <td><button className="btn btn-sm btn-primary" onClick={e => scanner(el.barcode)}>Pilih</button></td>
                                     </tr>
                                 )}
