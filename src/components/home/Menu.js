@@ -24,6 +24,7 @@ const Menu = (props) => {
     const [bank, setBank] = useState()
     const [disable, setDisable] = useState(true)
     const [finish, setFinish] = useState(false)
+    const [transId, setTransId] = useState(null)
     const trans = useSelector(state => state.trans)
     const member = useSelector(state => state.member)
     const data = reduce(trans)
@@ -34,7 +35,7 @@ const Menu = (props) => {
         } else {
             setDisable(true)
         }
-    }, [pay])
+    }, [pay, transId])
 
     const handlePay = () => {
         if (data.sub_total > 0) {
@@ -100,7 +101,30 @@ const Menu = (props) => {
             }
             const hit = await axios.post(`${process.env.REACT_APP_API_POS}/transaction/create`, body, config)
             if (hit.data.status) {
+                let id = hit.data.data
                 setFinish(true)
+                setTransId(id)
+                printing(id)
+            } else {
+                alert(hit.data.message)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handlePrint = () => {
+        printing(transId)
+    }
+
+    const printing = async (transactionId) => {
+        try {
+            const config = {
+                headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
+            }
+            const hit = await axios.post(`${process.env.REACT_APP_API_POS}/print/struk`, { transactionId }, config)
+            if (hit.data.status) {
+                alert(hit.data.result)
             } else {
                 alert(hit.data.message)
             }
@@ -157,7 +181,7 @@ const Menu = (props) => {
                 <button className="btn btn-danger btn-lg btn-bayar shadow" onClick={handlePay}>BAYAR</button>
             </div>
             <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
-                <Modal.Header closeButton>
+                <Modal.Header>
                     <Modal.Title>Total Bayar Rp. {numberFormat(data.sub_total)}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -215,7 +239,7 @@ const Menu = (props) => {
                         :
                         <div>
                             <Button variant="secondary" onClick={props.redirect}>Selesai</Button>
-                            <Button variant="success" className="ml-3">Print Struk</Button>
+                            <Button variant="success" className="ml-3" onClick={handlePrint}>Print Struk</Button>
                         </div>
                     }
                 </Modal.Footer>

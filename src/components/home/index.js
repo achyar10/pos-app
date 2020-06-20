@@ -48,6 +48,7 @@ const Home = (props) => {
                         <Menu redirect={handleFinish} product={handleModalProduct} history={handleModalProduct2} member={handleModalProduct3} />
                     </div>
                 </div>
+                {/* <button className="btn btn-success" onClick={handlePrint}>Tes</button> */}
                 <Product show={show} close={handleClose} />
                 <History show={show2} close={handleClose2} />
                 <Member show={show3} close={handleClose3} />
