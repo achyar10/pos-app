@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import axios from 'axios'
-import { numberFormat } from '../../helpers'
+import { numberFormat, printing } from '../../helpers'
 
 const History = (props) => {
 
@@ -70,7 +70,7 @@ const History = (props) => {
                                         <td align="right">{numberFormat(el.total_discount)}</td>
                                         <td align="right">{numberFormat(el.grand_total + el.total_discount)}</td>
                                         <td>{(el.retur) ? 'Ya' : 'Tidak'}</td>
-                                        <td><button className="btn btn-success btn-sm">Reprint</button></td>
+                                        <td><button className="btn btn-success btn-sm" onClick={() => printing(el.id)}>Reprint</button></td>
                                     </tr>
                                 )}
                             </tbody>

@@ -49,6 +49,49 @@ const Pay = (props) => {
             }
         } catch (error) {
             console.log(error)
+            alert('Time out!')
+        }
+    }
+
+    const handleHold = () => {
+        if (window.confirm('Apakah anda akan menahan transaksi ini?')) {
+            let details = []
+            trans.forEach(el => {
+                details.push({
+                    productId: el.productId,
+                    barcode: el.barcode,
+                    desc: el.desc,
+                    qty: el.qty,
+                    hpp: el.hpp,
+                    sales: el.sales,
+                    disc: el.disc
+                })
+            });
+            const snap = {
+                memberId: (member) ? member.memberId : null,
+                member_no: (member) ? member.member_no : null,
+                member_fullname: (member) ? member.member_fullname : null,
+                items: details
+            }
+            hit(snap)
+        }
+    }
+
+    const hit = async (body) => {
+        try {
+            const config = {
+                headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
+            }
+            const hit = await axios.post(`${process.env.REACT_APP_API_POS}/hold`, body, config)
+            if (hit.data.status) {
+                dispatch({ type: 'TRANS', payload: [] })
+                dispatch({ type: 'MEMBER', payload: null })
+                alert('Transaksi berhasil di tahan')
+            } else {
+                alert(hit.data.message)
+            }
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -134,7 +177,7 @@ const Pay = (props) => {
                             ) : <tr><td colSpan="6" align="center">Belanjaan tidak ada</td></tr>}
                         </tbody>
                     </table>
-                    {(trans.length > 0) ? <button className="btn btn-warning text-white float-right">Hold Transaksi</button> : ''}
+                    {(trans.length > 0) ? <button className="btn btn-warning text-white float-right" onClick={handleHold}>Hold Transaksi</button> : ''}
                 </div>
             </div>
         </>

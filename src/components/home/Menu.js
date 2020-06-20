@@ -5,7 +5,7 @@ import product from '../../assets/img/product.png'
 import open from '../../assets/img/open.png'
 import clerek from '../../assets/img/clerek.png'
 import ecommerce from '../../assets/img/ecommerce.png'
-import { numberFormat, reduce } from '../../helpers'
+import { numberFormat, reduce, printing } from '../../helpers'
 import { Modal, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
@@ -117,22 +117,6 @@ const Menu = (props) => {
         printing(transId)
     }
 
-    const printing = async (transactionId) => {
-        try {
-            const config = {
-                headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
-            }
-            const hit = await axios.post(`${process.env.REACT_APP_API_POS}/print/struk`, { transactionId }, config)
-            if (hit.data.status) {
-                alert(hit.data.result)
-            } else {
-                alert(hit.data.message)
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
     return (
         <>
             <div className="mt-2 text-bayar">
@@ -158,7 +142,7 @@ const Menu = (props) => {
                         </div>
                     </div>
                     <div className="col-md-6 left">
-                        <div className="card button-box text-center shadow p-3 mb-5 bg-white">
+                        <div className="card button-box text-center shadow p-3 mb-5 bg-white" onClick={props.hold}>
                             <img src={open} alt="" height="70" className="mx-auto d-block" />
                             OPEN HOLD
                         </div>
@@ -166,7 +150,7 @@ const Menu = (props) => {
                 </div>
                 <div className="row top">
                     <div className="col-md-6">
-                        <div className="card button-box text-center shadow p-3 mb-5 bg-white">
+                        <div className="card button-box text-center shadow p-3 mb-5 bg-white" onClick={props.clerk}>
                             <img src={clerek} alt="" height="70" className="mx-auto d-block" />
                             CLERK
                         </div>
