@@ -17,7 +17,7 @@ const Auth = (props) => {
             setUser(null)
             return
         }
-        const URL = `${process.env.REACT_APP_API_URL}/auth/check`
+        const URL = `${process.env.REACT_APP_API_POS}/auth/check`
         const response = await axios.get(URL, { headers: { Authorization: getJwt() } })
         if (response) {
             setUser(response.data.data)
