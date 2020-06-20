@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import { numberFormat } from '../../helpers'
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
 import axios from 'axios'
 
@@ -9,10 +9,7 @@ const Hold = (props) => {
 
     const [holds, setHold] = useState([])
     const dispatch = useDispatch()
-
-    useEffect(() => {
-        getHolds()
-    }, [holds])
+    const hold = useSelector(state => state.hold)
 
     const getHolds = async () => {
         try {
@@ -22,8 +19,6 @@ const Hold = (props) => {
             const hit = await axios.get(`${process.env.REACT_APP_API_POS}/hold`, config)
             if (hit.data.status) {
                 setHold(hit.data.data)
-            } else {
-                alert(hit.data.message)
             }
         } catch (error) {
             console.log(error)
@@ -40,8 +35,16 @@ const Hold = (props) => {
             headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
         }
         axios.delete(`${process.env.REACT_APP_API_POS}/hold/${obj.id}`, config)
-            .then(res => console.log('Delete hold berhasil'))
+            .then(res => {
+                getHolds()
+                console.log('Delete hold berhasil')
+            })
             .catch(err => console.log('Delete hold gagal'))
+    }
+
+    if (hold) {
+        getHolds()
+        dispatch({ type: 'HOLD', payload: false })
     }
 
     return (

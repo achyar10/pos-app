@@ -177,7 +177,7 @@ const Pay = (props) => {
                             ) : <tr><td colSpan="6" align="center">Belanjaan tidak ada</td></tr>}
                         </tbody>
                     </table>
-                    {(trans.length > 0) ? <button className="btn btn-warning text-white float-right" onClick={handleHold}>Hold Transaksi</button> : ''}
+                    {(trans.length > 0) ? <button className="btn btn-warning text-white float-right" onClick={() => handleHold()}>Hold Transaksi</button> : ''}
                 </div>
             </div>
         </>

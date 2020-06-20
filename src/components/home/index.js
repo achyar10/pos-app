@@ -40,7 +40,10 @@ const Home = (props) => {
         handleShow4()
         dispatch({ type: 'CLERK', payload: true })
     }
-    const handleModalProduct5 = () => handleShow5()
+    const handleModalProduct5 = () => {
+        handleShow5()
+        dispatch({ type: 'HOLD', payload: true })
+    }
 
     const handleLogout = () => {
         localStorage.removeItem('authJwt')

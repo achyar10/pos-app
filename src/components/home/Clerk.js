@@ -18,6 +18,8 @@ const Clerk = (props) => {
         count_qty: 0
     })
     const [selisih, setSelisih] = useState(0)
+    const [disable, setDisable] = useState(false)
+    const [buttonName, setButtonName] = useState('Proses Clerk')
     const dispatch = useDispatch()
     const clerk = useSelector(state => state.clerk)
 
@@ -39,6 +41,31 @@ const Clerk = (props) => {
         } catch (error) {
             console.log(error)
         }
+    }
+
+    const handleClerk = () => {
+        const config = {
+            headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
+        }
+        const grand_total = data.total_trans - data.total_disc - data.total_retur + data.total_sedekah
+        let body = {
+            ...data, ...{
+                grand_total, setoran: grand_total + selisih
+            }
+        }
+        setDisable(true)
+        setButtonName('Proses...')
+        axios.post(`${process.env.REACT_APP_API_POS}/clerk`, body, config)
+            .then(res => {
+                localStorage.removeItem('authJwt')
+                window.location.href = '/login'
+            })
+            .catch(err => {
+                console.log(err)
+                setDisable(false)
+                setButtonName('Proses Clerk')
+                alert('Server time out!')
+            })
     }
 
     if (clerk) {
@@ -124,7 +151,7 @@ const Clerk = (props) => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={props.close}>Tutup</Button>
-                    <Button variant="danger" className="ml-2" >Proses Clerk</Button>
+                    <Button variant="danger" className="ml-2" disabled={disable} onClick={() => handleClerk()}>{buttonName}</Button>
                 </Modal.Footer>
             </Modal>
         </>
