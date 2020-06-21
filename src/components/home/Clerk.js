@@ -105,12 +105,12 @@ const Clerk = (props) => {
                                     <td>{numberFormat(data.count_retur)}</td>
                                 </tr>
                                 <tr>
-                                    <td>Total Cash</td>
+                                    <td>Total Tunai</td>
                                     <td>:</td>
                                     <td>Rp. {numberFormat(data.total_cash)}</td>
                                 </tr>
                                 <tr>
-                                    <td>Total Debit/Credit</td>
+                                    <td>Total Non Tunai</td>
                                     <td>:</td>
                                     <td>Rp. {numberFormat(data.total_debit)}</td>
                                 </tr>
