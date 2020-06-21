@@ -34,14 +34,16 @@ const Pay = (props) => {
                             hpp: item.hpp,
                             sales: item.sales,
                             qty: 1,
-                            disc: 0,
+                            valueDisc: item.disc,
+                            disc: item.disc,
                             sub_total: item.sales - item.disc
                         }]
                     })
                 } else {
                     let copyData = [...trans]
                     copyData[index].qty += 1
-                    copyData[index].sub_total = copyData[index].sales * copyData[index].qty
+                    copyData[index].disc = copyData[index].valueDisc * copyData[index].qty
+                    copyData[index].sub_total = (copyData[index].sales * copyData[index].qty) - copyData[index].disc
                     dispatch({ type: 'TRANS', payload: copyData })
                 }
             } else {
@@ -107,7 +109,8 @@ const Pay = (props) => {
         let copyData = [...trans]
         if (index > -1) {
             copyData[index].qty = parseInt(val) || 0
-            copyData[index].sub_total = copyData[index].sales * copyData[index].qty
+            copyData[index].disc = copyData[index].valueDisc * copyData[index].qty
+            copyData[index].sub_total = (copyData[index].sales * copyData[index].qty) - copyData[index].disc
         }
         dispatch({ type: 'TRANS', payload: copyData })
     }
@@ -136,12 +139,12 @@ const Pay = (props) => {
                             <tr>
                                 <td>Diskon %</td>
                                 <td>:</td>
-                                <td id="totalDisc">0</td>
+                                <td>0</td>
                             </tr>
                             <tr>
                                 <td>Total Potongan</td>
                                 <td>:</td>
-                                <td>Rp. 0</td>
+                                <td>Rp. {numberFormat(data.disc)}</td>
                             </tr>
                         </tbody>
                     </table>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import { numberFormat } from '../../helpers'
+import Promotion from './Promotion'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 
@@ -12,6 +13,9 @@ const Product = (props) => {
     const [buttonName, setButtonName] = useState('Update Produk')
     const trans = useSelector(state => state.trans)
     const dispatch = useDispatch()
+    const [show, setShow] = useState(false)
+    const handleClose = () => setShow(false)
+    const handleShow = () => setShow(true)
 
     useEffect(() => {
 
@@ -57,14 +61,16 @@ const Product = (props) => {
                             hpp: item.hpp,
                             sales: item.sales,
                             qty: 1,
-                            disc: 0,
+                            valueDisc: item.disc,
+                            disc: item.disc,
                             sub_total: item.sales - item.disc
                         }]
                     })
                 } else {
                     let copyData = [...trans]
                     copyData[index].qty += 1
-                    copyData[index].sub_total = copyData[index].sales * copyData[index].qty
+                    copyData[index].disc = copyData[index].valueDisc * copyData[index].qty
+                    copyData[index].sub_total = (copyData[index].sales * copyData[index].qty) - copyData[index].disc
                     dispatch({ type: 'TRANS', payload: copyData })
                 }
             } else {
@@ -95,8 +101,11 @@ const Product = (props) => {
     return (
         <>
             <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg'>
-                <Modal.Header closeButton>
-                    <Modal.Title>Semua Produk</Modal.Title>
+                <Modal.Header>
+                    <Modal.Title>Semua Produk
+                        <Button variant="danger" className="btn-sm ml-2" onClick={handleUpdate} disabled={disable}>{buttonName}</Button>
+                        <Button variant="warning" className="btn-sm ml-2 text-white" onClick={handleShow}>{'Promo'}</Button>
+                    </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="input-group mb-3">
@@ -131,9 +140,9 @@ const Product = (props) => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={props.close}>Tutup</Button>
-                    <Button variant="danger" className="ml-2" onClick={handleUpdate} disabled={disable}>{buttonName}</Button>
                 </Modal.Footer>
             </Modal>
+            <Promotion show={show} onHide={handleClose} close={handleClose}  />
         </>
 
     )
