@@ -137,9 +137,9 @@ const Pay = (props) => {
                                 <td>{numberFormat(data.qty)}</td>
                             </tr>
                             <tr>
-                                <td>Diskon %</td>
+                                <td>Diskon Member %</td>
                                 <td>:</td>
-                                <td>0</td>
+                                <td>{(member) ? member.member_disc : 0}</td>
                             </tr>
                             <tr>
                                 <td>Total Potongan</td>

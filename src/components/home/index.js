@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux'
 
 const Home = (props) => {
 
-    const title = 'Home'
+    const title = 'POS - Home'
 
     useEffect(() => {
         document.title = title
@@ -46,8 +46,14 @@ const Home = (props) => {
     }
 
     const handleLogout = () => {
-        localStorage.removeItem('authJwt')
-        props.history.push('/login')
+        if (window.confirm('Apakah anda akan menahan transaksi ini?')) {
+            dispatch({ type: 'CLERK', payload: false })
+            dispatch({ type: 'HOLD', payload: false })
+            dispatch({ type: 'TRANS', payload: [] })
+            dispatch({ type: 'MEMBER', payload: null })
+            localStorage.removeItem('authJwt')
+            props.history.push('/login')
+        }
     }
 
     const handleFinish = () => {
@@ -63,7 +69,7 @@ const Home = (props) => {
                         <Pay />
                     </div>
                     <div className="col-md-3">
-                        <Menu redirect={handleFinish} product={handleModalProduct} history={handleModalProduct2} member={handleModalProduct3} clerk={handleModalProduct4} hold={handleModalProduct5}/>
+                        <Menu redirect={handleFinish} product={handleModalProduct} history={handleModalProduct2} member={handleModalProduct3} clerk={handleModalProduct4} hold={handleModalProduct5} />
                     </div>
                 </div>
                 <Product show={show} close={handleClose} />

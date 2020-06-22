@@ -39,7 +39,8 @@ const Member = (props) => {
         dispatch({type: 'MEMBER', payload: {
             memberId: el.id,
             member_no: el.phone,
-            member_fullname: el.name
+            member_fullname: el.name,
+            member_disc: (el.kind === 'gold') ? 5 : ((el.kind === 'silver') ? 3 : 0)
         }})
     }
 

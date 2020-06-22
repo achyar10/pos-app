@@ -14,7 +14,7 @@ const Menu = (props) => {
 
     const [show, setShow] = useState(false)
     const [pay, setPay] = useState('1')
-    const [cash, setCash] = useState()
+    const [cash, setCash] = useState('')
     const [cashback, setCashback] = useState(0)
     const [sedekah, setSedekah] = useState(0)
     const [debit, setDebit] = useState()
@@ -25,10 +25,12 @@ const Menu = (props) => {
     const [disable, setDisable] = useState(true)
     const [finish, setFinish] = useState(false)
     const [transId, setTransId] = useState(null)
+    const [money, setMoney] = useState([])
     const trans = useSelector(state => state.trans)
     const member = useSelector(state => state.member)
     const data = reduce(trans)
-
+    let pecahan = [500, 1000, 2000, 5000, 10000, 20000, 50000, 100000]
+    
     useEffect(() => {
         if (pay === '2') {
             setDisable(false)
@@ -40,6 +42,30 @@ const Menu = (props) => {
     const handlePay = () => {
         if (data.sub_total > 0) {
             handleShow()
+            if (data.sub_total > 100000) {
+                let pecah = right(data.sub_total.toString(), 5)
+                let hasil = pecahan.filter(el => el >= parseInt(pecah))
+                let arr = []
+                let result = []
+                hasil.map(el => arr.push((data.sub_total - parseInt(pecah)) + el))
+                arr.forEach(el => {
+                    if (el > data.sub_total) {
+                        result.push(el)
+                    }
+                })
+                setMoney(result)
+            } else {
+                let hasil = pecahan.filter(el => el >= data.sub_total)
+                let arr = []
+                let result = []
+                hasil.map(el => arr.push((data.sub_total - data.sub_total) + el))
+                arr.forEach(el => {
+                    if (el !== data.sub_total) {
+                        result.push(el)
+                    }
+                })
+                setMoney(result)
+            }
         } else {
             alert('Data belanjaan anda masih kosong!')
         }
@@ -48,6 +74,17 @@ const Menu = (props) => {
     const handleCheck = (e) => {
         const val = e.target.value
         setPay(val)
+    }
+
+    const handleCash = (val) => {
+        setCash(val)
+        const total = val - data.sub_total
+        setCashback(total)
+        if (val >= data.sub_total) {
+            setDisable(false)
+        } else {
+            setDisable(true)
+        }
     }
 
     const cashBack = (e) => {
@@ -117,6 +154,10 @@ const Menu = (props) => {
         printing(transId)
     }
 
+    function right(str, chr) {
+        return str.slice(str.length - chr, str.length);
+    }
+
     return (
         <>
             <div className="mt-2 text-bayar">
@@ -177,8 +218,12 @@ const Menu = (props) => {
                     {(pay === '1') ?
                         <div>
                             <div className="form-group mt-2">
-                                <label>Uang Tunai <span className="text-danger">*</span></label>
-                                <input type="text" className="form-control" placeholder="input manual disini" onChange={e => cashBack(e)} />
+                                <label>Uang Tunai <span className="text-danger">*</span></label><br/>
+                                <Button variant="success" size="sm" className="ml-2 mt-1" onClick={() => handleCash(data.sub_total)}>{numberFormat(data.sub_total)}</Button>
+                                {money.map(el => (
+                                    <Button key={el} variant="success" size="sm" className="ml-2 mt-1" onClick={() => handleCash(el)}>{numberFormat(el)}</Button>
+                                ))}
+                                <input type="text" className="form-control mt-2" placeholder="atau input manual disini" onChange={e => cashBack(e)} value={cash} />
                             </div>
                             <div className="form-group">
                                 <label>Sedekah</label>

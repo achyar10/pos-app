@@ -2,7 +2,8 @@ const initialState = {
     trans: [],
     member: null,
     clerk: false,
-    hold: false
+    hold: false,
+    session: {}
 }
 
 const rootReducer = (state = initialState, action) => {
@@ -26,6 +27,11 @@ const rootReducer = (state = initialState, action) => {
             return {
                 ...state,
                 hold: action.payload,
+            }
+        case 'SESSION':
+            return {
+                ...state,
+                session: action.payload,
             }
         default:
             break;
