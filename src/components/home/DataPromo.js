@@ -1,35 +1,42 @@
 import React from 'react'
-import moment from 'moment'
-import { numberFormat } from '../../helpers'
-moment.locale('id')
+import BootstrapTable from 'react-bootstrap-table-next'
+import paginationFactory from 'react-bootstrap-table2-paginator'
+import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
+const { SearchBar } = Search;
 
 const DataPromo = ({ promotion, loading }) => {
+
+    const columns = [
+        { dataField: "barcode", text: "Barcode" },
+        { dataField: "desc", text: "Nama Produk" },
+        { dataField: "sales", text: "Harga Awal" },
+        { dataField: "promo", text: "Harga Promo" },
+        { dataField: "period", text: "Periode" },
+    ]
+
     if (loading) {
         return <h2>Mohon tunggu...</h2>
     }
     return (
-        <div className="table-responsive">
-            <table className="table table-sm table-hover table-striped">
-                <thead className="thead-dark">
-                    <tr>
-                        <th>Nama Produk</th>
-                        <th>Harga</th>
-                        <th>Harga Promo</th>
-                        <th>Periode</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {promotion.map((p, i) => (
-                        <tr key={i}>
-                            <td>{p.desc}</td>
-                            <td>{numberFormat(p.temp_item.sales)}</td>
-                            <td>{numberFormat(p.temp_item.sales - p.amount)}</td>
-                            <td>{moment(p.period_start).format('DD MMM YYYY')} s/d {moment(p.period_end).format('DD MMM YYYY')}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+        <ToolkitProvider
+            bootstrap4
+            keyField="barcode"
+            data={promotion}
+            columns={columns}
+            search>
+            {
+                props => (
+                    <div>
+                        <div className="float-right">
+                            <SearchBar {...props.searchProps} placeholder="Pencarian" />
+                        </div>
+                        <BootstrapTable
+                            {...props.baseProps} pagination={paginationFactory()} wrapperClasses="table-sm"
+                        />
+                    </div>
+                )
+            }
+        </ToolkitProvider>
     )
 }
 

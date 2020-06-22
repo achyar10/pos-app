@@ -14,17 +14,20 @@ const Promotion = (props) => {
         headers: { Authorization: `Bearer ${token}` }
     }
 
+    const fetchPromo = async () => {
+        setLoading(true)
+        const res = await axios.get(`${process.env.REACT_APP_API_POS}/promotion`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
+        })
+        setPromotion(res.data)
+        setLoading(false)
+    }
+    
     useEffect(() => {
-        const fetchPromo = async () => {
-            setLoading(true)
-            const res = await axios.get(`${process.env.REACT_APP_API_POS}/promotion`, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
-            })
-            setPromotion(res.data)
-            setLoading(false)
+        if (props.fetch) {
+            fetchPromo()
         }
-        fetchPromo()
-    }, [])
+    }, [props.fetch])
 
     const handleUpdate = () => {
         setButtonName('Proses Update...')
@@ -33,6 +36,7 @@ const Promotion = (props) => {
             .then(response => {
                 setButtonName('Update Produk')
                 setDisable(false)
+                fetchPromo()
                 alert('Update promosi selesai')
             })
             .catch(err => console.log(err))

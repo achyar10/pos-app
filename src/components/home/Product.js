@@ -10,12 +10,19 @@ const Product = (props) => {
     const [product, setProduct] = useState([])
     const [search, setSearch] = useState('')
     const [disable, setDisable] = useState(false)
+    const [fetch, setFetch] = useState(false)
     const [buttonName, setButtonName] = useState('Update Produk')
     const trans = useSelector(state => state.trans)
     const dispatch = useDispatch()
     const [show, setShow] = useState(false)
-    const handleClose = () => setShow(false)
-    const handleShow = () => setShow(true)
+    const handleClose = () => {
+        setShow(false)
+        setFetch(false)
+    }
+    const handleShow = () => {
+        setShow(true)
+        setFetch(true)
+    }
 
     useEffect(() => {
 
@@ -142,7 +149,7 @@ const Product = (props) => {
                     <Button variant="secondary" onClick={props.close}>Tutup</Button>
                 </Modal.Footer>
             </Modal>
-            <Promotion show={show} onHide={handleClose} close={handleClose}  />
+            <Promotion show={show} onHide={handleClose} close={handleClose} fetch={fetch} />
         </>
 
     )
