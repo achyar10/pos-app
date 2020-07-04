@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Modal, Button } from 'react-bootstrap'
-import { numberFormat } from '../../helpers'
+import { numberFormat, fetchGet, fetchDelete } from '../../helpers'
+import { holdUrl } from '../../Endpoint'
 import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
-import axios from 'axios'
 
 const Hold = (props) => {
 
@@ -12,34 +12,23 @@ const Hold = (props) => {
     const hold = useSelector(state => state.hold)
 
     const getHolds = async () => {
-        try {
-            const config = {
-                headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
-            }
-            const hit = await axios.get(`${process.env.REACT_APP_API_POS}/hold`, config)
-            if (hit.data.status) {
-                setHold(hit.data.data)
-            }
-        } catch (error) {
-            console.log(error)
+        const hit = await fetchGet(holdUrl)
+        if (hit.status) {
+            setHold(hit.data)
         }
     }
 
-    const handleHold = (obj) => {
+    const handleHold = async (obj) => {
         obj.items.map(el => el.sub_total = (el.sales * el.qty) - (el.disc * el.qty))
         dispatch({ type: 'TRANS', payload: obj.items })
         if (obj.memberId) {
             dispatch({ type: 'MEMBER', payload: { memberId: obj.memberId, member_no: obj.member_no, member_fullname: obj.member_fullname } })
         }
-        const config = {
-            headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
+        const res = await fetchDelete(holdUrl, { id: obj.id })
+        if (res.status) {
+            getHolds()
+            console.log('Delete hold berhasil')
         }
-        axios.delete(`${process.env.REACT_APP_API_POS}/hold/${obj.id}`, config)
-            .then(res => {
-                getHolds()
-                console.log('Delete hold berhasil')
-            })
-            .catch(err => console.log('Delete hold gagal'))
     }
 
     if (hold) {

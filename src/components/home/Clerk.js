@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
-import axios from 'axios'
-import { numberFormat } from '../../helpers'
+import { clerks } from '../../Endpoint'
+import { numberFormat, fetchPost, fetchGet } from '../../helpers'
 import { useSelector, useDispatch } from 'react-redux'
 
 const Clerk = (props) => {
@@ -28,25 +28,15 @@ const Clerk = (props) => {
     }, [])
 
     const getClerk = async () => {
-        try {
-            const config = {
-                headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
-            }
-            const hit = await axios.get(`${process.env.REACT_APP_API_POS}/clerk`, config)
-            if (hit.data.status) {
-                setData(hit.data.data)
-            } else {
-                alert(hit.data.message)
-            }
-        } catch (error) {
-            console.log(error)
+        const hit = await fetchGet(clerks)
+        if (hit.status) {
+            setData(hit.data)
+        } else {
+            alert(hit.message)
         }
     }
 
-    const handleClerk = () => {
-        const config = {
-            headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
-        }
+    const handleClerk = async () => {
         const grand_total = data.total_trans - data.total_disc - data.total_retur + data.total_sedekah
         let body = {
             ...data, ...{
@@ -55,17 +45,15 @@ const Clerk = (props) => {
         }
         setDisable(true)
         setButtonName('Proses...')
-        axios.post(`${process.env.REACT_APP_API_POS}/clerk`, body, config)
-            .then(res => {
-                localStorage.removeItem('authJwt')
-                window.location.href = '/login'
-            })
-            .catch(err => {
-                console.log(err)
-                setDisable(false)
-                setButtonName('Proses Clerk')
-                alert('Server time out!')
-            })
+        const res = await fetchPost(clerks, body)
+        if (res.status) {
+            localStorage.removeItem('authJwt')
+            window.location.href = '/login'
+        } else {
+            setDisable(false)
+            setButtonName('Proses Clerk')
+            alert('Server time out!')
+        }
     }
 
     if (clerk) {

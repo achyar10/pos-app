@@ -5,10 +5,10 @@ import product from '../../assets/img/product.png'
 import open from '../../assets/img/open.png'
 import clerek from '../../assets/img/clerek.png'
 import ecommerce from '../../assets/img/ecommerce.png'
-import { numberFormat, reduce, printing } from '../../helpers'
+import { numberFormat, reduce, printing, fetchPost } from '../../helpers'
 import { Modal, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
-import axios from 'axios'
+import { transUrl } from '../../Endpoint'
 
 const Menu = (props) => {
 
@@ -30,7 +30,7 @@ const Menu = (props) => {
     const member = useSelector(state => state.member)
     const data = reduce(trans)
     let pecahan = [500, 1000, 2000, 5000, 10000, 20000, 50000, 100000]
-    
+
     useEffect(() => {
         if (pay === '2') {
             setDisable(false)
@@ -123,6 +123,7 @@ const Menu = (props) => {
             memberId: (member) ? member.memberId : null,
             member_no: (member) ? member.member_no : null,
             member_fullname: (member) ? member.member_fullname : null,
+            member_kind: (member) ? member.member_kind : null,
             payment_method: (pay === '1') ? 'CASH' : 'DEBIT/CREDIT',
             cash: (pay === '1') ? cash : 0,
             sedekah, bank, ccno: debit, code,
@@ -132,21 +133,14 @@ const Menu = (props) => {
     }
 
     const hit = async (body) => {
-        try {
-            const config = {
-                headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
-            }
-            const hit = await axios.post(`${process.env.REACT_APP_API_POS}/transaction/create`, body, config)
-            if (hit.data.status) {
-                let id = hit.data.data
-                setFinish(true)
-                setTransId(id)
-                printing(id)
-            } else {
-                alert(hit.data.message)
-            }
-        } catch (error) {
-            console.log(error)
+        const hit = await fetchPost(transUrl, body)
+        if (hit.status) {
+            let id = hit.data
+            setFinish(true)
+            setTransId(id)
+            printing(id)
+        } else {
+            alert(hit.message)
         }
     }
 
@@ -218,7 +212,7 @@ const Menu = (props) => {
                     {(pay === '1') ?
                         <div>
                             <div className="form-group mt-2">
-                                <label>Uang Tunai <span className="text-danger">*</span></label><br/>
+                                <label>Uang Tunai <span className="text-danger">*</span></label><br />
                                 <Button variant="success" size="sm" className="ml-2 mt-1" onClick={() => handleCash(data.sub_total)}>{numberFormat(data.sub_total)}</Button>
                                 {money.map(el => (
                                     <Button key={el} variant="success" size="sm" className="ml-2 mt-1" onClick={() => handleCash(el)}>{numberFormat(el)}</Button>

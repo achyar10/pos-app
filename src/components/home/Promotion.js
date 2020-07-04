@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import DataPromo from './DataPromo'
-import axios from 'axios'
+import { promotionUrl } from '../../Endpoint'
+import { fetchGet, fetchPost } from '../../helpers'
 
 const Promotion = (props) => {
 
@@ -9,37 +10,30 @@ const Promotion = (props) => {
     const [buttonName, setButtonName] = useState('Update Promosi')
     const [promotion, setPromotion] = useState([])
     const [loading, setLoading] = useState(false)
-    const token = localStorage.getItem('authJwt')
-    const config = {
-        headers: { Authorization: `Bearer ${token}` }
-    }
 
     const fetchPromo = async () => {
         setLoading(true)
-        const res = await axios.get(`${process.env.REACT_APP_API_POS}/promotion`, {
-            headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
-        })
-        setPromotion(res.data)
+        const res = await fetchGet(promotionUrl)
+        setPromotion(res)
         setLoading(false)
     }
-    
+
     useEffect(() => {
         if (props.fetch) {
             fetchPromo()
         }
     }, [props.fetch])
 
-    const handleUpdate = () => {
+    const handleUpdate = async () => {
         setButtonName('Proses Update...')
         setDisable(true)
-        axios.post(`${process.env.REACT_APP_API_POS}/promotion`, {}, config)
-            .then(response => {
-                setButtonName('Update Produk')
-                setDisable(false)
-                fetchPromo()
-                alert('Update promosi selesai')
-            })
-            .catch(err => console.log(err))
+        const res = await fetchPost(promotionUrl, {})
+        if (res.status) {
+            setButtonName('Update Produk')
+            setDisable(false)
+            fetchPromo()
+            alert('Update promosi selesai')
+        }
     }
 
     return (

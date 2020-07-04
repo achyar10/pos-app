@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
-import axios from 'axios'
-import { numberFormat, printing } from '../../helpers'
+import { histories, returs, authorizes } from '../../Endpoint'
+import { numberFormat, printing, fetchPost } from '../../helpers'
 
 const History = (props) => {
 
@@ -29,40 +29,27 @@ const History = (props) => {
     }
 
     const getHistory = async () => {
-        try {
-            const q = search
-            const config = {
-                headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
-            }
-            const hit = await axios.post(`${process.env.REACT_APP_API_POS}/transaction/history`, { q }, config)
-            if (hit.data.status) {
-                setHistory(hit.data.data)
-            } else {
-                alert(hit.data.message)
-            }
-        } catch (error) {
-            console.log(error)
+        const q = search
+        const hit = await fetchPost(histories, { q })
+        if (hit.status) {
+            setHistory(hit.data)
+        } else {
+            alert(hit.message)
         }
     }
 
-    const handleRetur = () => {
-        const config = {
-            headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
+    const handleRetur = async () => {
+        const check = await fetchPost(authorizes, { nik, password })
+        if (check.status) {
+            const res = await fetchPost(returs, { transId })
+            alert(res.message)
+            setNik('')
+            setPassword('')
+            getHistory()
+            handleClose()
+        } else {
+            alert(check.message)
         }
-        axios.post(`${process.env.REACT_APP_API_URL}/auth/authorize`, { nik, password }, config)
-            .then(res => {
-                if (res.data.status) {
-                    axios.post(`${process.env.REACT_APP_API_POS}/transaction/retur`, { transId }, config)
-                    alert(res.data.message)
-                    setNik('')
-                    setPassword('')
-                    getHistory()
-                    handleClose()
-                } else {
-                    alert(res.data.message)
-                }
-            })
-            .catch(err => console.log(err))
     }
 
     return (

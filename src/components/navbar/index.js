@@ -1,7 +1,7 @@
 import React from 'react'
 import Logo from '../../assets/img/logo.png'
 import Person from '../../assets/img/cashier.png'
-import {useSelector} from 'react-redux'
+import { useSelector } from 'react-redux'
 import './navbar.css'
 
 const Navbar = (props) => {
@@ -11,7 +11,7 @@ const Navbar = (props) => {
     return (
         <nav className="navbar">
             <a className="navbar-brand text-white" href="/"><img src={Logo} height="40" alt="" /> DAHANTA POS</a>
-            <div style={{position: 'absolute', right: 250}}>
+            <div style={{ position: 'absolute', right: 250 }}>
                 <img src={Person} height="40" alt="" />
                 <span className="ml-2 text-white font-weight-bold" style={{ position: 'absolute', bottom: 0 }}>{session.name}</span>
             </div>

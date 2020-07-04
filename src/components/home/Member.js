@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import { useDispatch } from 'react-redux'
-import axios from 'axios'
+import { numberFormat, fetchPost } from '../../helpers'
+import { memberListUrl } from '../../Endpoint'
 import moment from 'moment'
 
 const Member = (props) => {
@@ -19,29 +20,26 @@ const Member = (props) => {
     }
 
     const getMember = async () => {
-        try {
-            const q = search
-            const config = {
-                headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
-            }
-            const hit = await axios.post(`${process.env.REACT_APP_API_URL}/member/list`, { q }, config)
-            if (hit.data.status) {
-                setMember(hit.data.data)
-            } else {
-                alert(hit.data.message)
-            }
-        } catch (error) {
-            console.log(error)
+        const q = search
+        const hit = await fetchPost(memberListUrl, { q })
+        if (hit.status) {
+            setMember(hit.data)
+        } else {
+            alert(hit.message)
         }
     }
 
     const selectMember = (el) => {
-        dispatch({type: 'MEMBER', payload: {
-            memberId: el.id,
-            member_no: el.phone,
-            member_fullname: el.name,
-            member_disc: (el.kind === 'gold') ? 5 : ((el.kind === 'silver') ? 3 : 0)
-        }})
+        dispatch({
+            type: 'MEMBER', payload: {
+                memberId: el.id,
+                member_no: el.phone,
+                member_fullname: el.name,
+                member_saldo: el.saldo,
+                member_disc: (el.kind === 'gold') ? 5 : ((el.kind === 'silver') ? 3 : 0),
+                member_kind: el.kind
+            }
+        })
     }
 
     return (
@@ -66,6 +64,7 @@ const Member = (props) => {
                                     <th>Nama</th>
                                     <th>No Member</th>
                                     <th>Tanggal Lahir</th>
+                                    <th>Point</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -76,6 +75,7 @@ const Member = (props) => {
                                         <td>{el.name}</td>
                                         <td>{el.phone}</td>
                                         <td>{moment(el.date).format('DD MMM YYYY')}</td>
+                                        <td>{numberFormat(el.saldo)}</td>
                                         <td><button className="btn btn-success btn-sm" onClick={() => selectMember(el)}>Pilih</button></td>
                                     </tr>
                                 )}

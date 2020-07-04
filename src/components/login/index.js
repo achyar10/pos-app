@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import { fetchPost } from '../../helpers'
+import { login } from '../../Endpoint'
 import Logo from '../../assets/img/logo.png'
 import './login.css'
 
@@ -16,17 +17,12 @@ const Login = (props) => {
         e.preventDefault()
         if (nik === '') return alert('Nik cannot be empty')
         if (password === '') return alert('Password cannot be empty')
-        const URL = `${process.env.REACT_APP_API_URL}/auth/login`
-        try {
-            const response = await axios.post(URL, { nik, password })
-            if (response.data.status) {
-                localStorage.setItem('authJwt', response.data.data.token)
-                props.history.push('/')
-            } else {
-                alert(response.data.message)
-            }
-        } catch (error) {
-            console.log(error)
+        const response = await fetchPost(login, { nik, password })
+        if (response.status) {
+            localStorage.setItem('authJwt', response.data.token)
+            props.history.push('/')
+        } else {
+            alert(response.message)
         }
     }
 

@@ -1,26 +1,24 @@
 import React, { useEffect } from 'react'
-import axios from 'axios'
+import { fetchGet } from '../../helpers'
+import { check } from '../../Endpoint'
 import { withRouter, Redirect } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { getJwt } from '../../helpers'
 
 const Auth = (props) => {
 
-    // const [user, setUser] = useState('')
     const user = useSelector(state => state.session)
     const dispatch = useDispatch()
 
     useEffect(() => {
         const getUser = async () => {
-            const jwt = getJwt()
+            const jwt = 'Bearer ' + localStorage.getItem('authJwt')
             if (!jwt) {
                 dispatch({ type: 'SESSION', payload: null })
                 return
             }
-            const URL = `${process.env.REACT_APP_API_POS}/auth/check`
-            const response = await axios.get(URL, { headers: { Authorization: getJwt() } })
-            if (response) {
-                dispatch({ type: 'SESSION', payload: response.data.data })
+            const response = await fetchGet(check)
+            if (response.status) {
+                dispatch({ type: 'SESSION', payload: response.data })
             }
         }
         getUser()

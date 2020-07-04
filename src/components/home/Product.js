@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
-import { numberFormat } from '../../helpers'
+import { numberFormat, fetchPost } from '../../helpers'
 import Promotion from './Promotion'
 import { useSelector, useDispatch } from 'react-redux'
-import axios from 'axios'
+import { scanUrl, itemUpdateUrl, itemUrl } from '../../Endpoint'
 
 const Product = (props) => {
 
@@ -34,74 +34,56 @@ const Product = (props) => {
     }
 
     const getProduct = async () => {
-        try {
-            const q = search
-            const config = {
-                headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
-            }
-            const hit = await axios.post(`${process.env.REACT_APP_API_POS}/item/list`, { q }, config)
-            if (hit.data.status) {
-                setProduct(hit.data.data)
-            } else {
-                alert(hit.data.message)
-            }
-        } catch (error) {
-            console.log(error)
+        const q = search
+        const hit = await fetchPost(itemUrl, { q })
+        if (hit.status) {
+            setProduct(hit.data)
+        } else {
+            alert(hit.message)
         }
     }
 
     const scanner = async barcode => {
-        try {
-            const config = {
-                headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
-            }
-            const hit = await axios.post(`${process.env.REACT_APP_API_POS}/item/scan`, { barcode }, config)
-            if (hit.data.status) {
-                const item = hit.data.data
-                const index = trans.findIndex(e => e.productId === item.productId)
-                if (index === -1) {
-                    dispatch({
-                        type: 'TRANS', payload: [...trans, {
-                            productId: item.productId,
-                            barcode: item.barcode,
-                            desc: item.desc,
-                            hpp: item.hpp,
-                            sales: item.sales,
-                            qty: 1,
-                            valueDisc: item.disc,
-                            disc: item.disc,
-                            sub_total: item.sales - item.disc
-                        }]
-                    })
-                } else {
-                    let copyData = [...trans]
-                    copyData[index].qty += 1
-                    copyData[index].disc = copyData[index].valueDisc * copyData[index].qty
-                    copyData[index].sub_total = (copyData[index].sales * copyData[index].qty) - copyData[index].disc
-                    dispatch({ type: 'TRANS', payload: copyData })
-                }
+        const hit = await fetchPost(scanUrl, { barcode })
+        if (hit.status) {
+            const item = hit.data
+            const index = trans.findIndex(e => e.productId === item.productId)
+            if (index === -1) {
+                dispatch({
+                    type: 'TRANS', payload: [...trans, {
+                        productId: item.productId,
+                        barcode: item.barcode,
+                        desc: item.desc,
+                        hpp: item.hpp,
+                        sales: item.sales,
+                        qty: 1,
+                        valueDisc: item.disc,
+                        disc: item.disc,
+                        sub_total: item.sales - item.disc
+                    }]
+                })
             } else {
-                alert('Data produk tidak ditemukan!')
+                let copyData = [...trans]
+                copyData[index].qty += 1
+                copyData[index].disc = copyData[index].valueDisc * copyData[index].qty
+                copyData[index].sub_total = (copyData[index].sales * copyData[index].qty) - copyData[index].disc
+                dispatch({ type: 'TRANS', payload: copyData })
             }
-        } catch (error) {
-            console.log(error)
+        } else {
+            alert('Data produk tidak ditemukan!')
         }
     }
 
-    const handleUpdate = () => {
+    const handleUpdate = async () => {
         setButtonName('Proses Update...')
         setDisable(true)
         const token = localStorage.getItem('authJwt')
-        const config = {
-            headers: { Authorization: `Bearer ${token}` }
+        const res = await fetchPost(itemUpdateUrl, { token })
+        if (res.status) {
+            setButtonName('Update Produk')
+            setDisable(false)
+            alert('Update produk selesai')
         }
-        axios.post(`${process.env.REACT_APP_API_POS}/item/update`, { token }, config)
-            .then(response => {
-                setButtonName('Update Produk')
-                setDisable(false)
-                alert('Update produk selesai')
-            })
-            .catch(err => console.log(err))
     }
 
 
