@@ -32,11 +32,7 @@ const Menu = (props) => {
     let pecahan = [500, 1000, 2000, 5000, 10000, 20000, 50000, 100000]
 
     useEffect(() => {
-        if (pay === '2') {
-            setDisable(false)
-        } else {
-            setDisable(true)
-        }
+
     }, [pay, transId])
 
     const handlePay = () => {
@@ -74,6 +70,17 @@ const Menu = (props) => {
     const handleCheck = (e) => {
         const val = e.target.value
         setPay(val)
+        if (val === '3') {
+            if (member.member_saldo > data.sub_total) {
+                setDisable(false)
+            } else {
+                setDisable(true)
+            }
+        } else if (val === '2') {
+            setDisable(false)
+        } else {
+            setDisable(true)
+        }
     }
 
     const handleCash = (val) => {
@@ -124,7 +131,7 @@ const Menu = (props) => {
             member_no: (member) ? member.member_no : null,
             member_fullname: (member) ? member.member_fullname : null,
             member_kind: (member) ? member.member_kind : null,
-            payment_method: (pay === '1') ? 'CASH' : 'DEBIT/CREDIT',
+            payment_method: (pay === '1') ? 'CASH' : ((pay === '2') ? 'DEBIT/CREDIT' : 'MEMBER'),
             cash: (pay === '1') ? cash : 0,
             sedekah, bank, ccno: debit, code,
             items: details
@@ -205,8 +212,9 @@ const Menu = (props) => {
                 </Modal.Header>
                 <Modal.Body>
                     <div className="form-group">
-                        <label><input type="radio" name="type" value="1" defaultChecked={true} onChange={e => handleCheck(e)} /> Tunai</label><br />
-                        <label><input type="radio" name="type" value="2" onChange={e => handleCheck(e)} /> Debit/Kredit</label>
+                        <label><input type="radio" name="type" value="1" defaultChecked={(pay === '1') ? true : false} onChange={e => handleCheck(e)} /> Tunai</label><br />
+                        <label><input type="radio" name="type" value="2" defaultChecked={(pay === '2') ? true : false} onChange={e => handleCheck(e)} /> Debit/Kredit</label><br />
+                        {(!member) ? null : <label><input type="radio" name="type" value="3" defaultChecked={(pay === '3') ? true : false} onChange={e => handleCheck(e)} /> Kartu Member</label>}
                     </div>
                     <hr />
                     {(pay === '1') ?
@@ -229,26 +237,33 @@ const Menu = (props) => {
                             </div>
                         </div>
                         :
-                        <div>
-                            <div className="form-group">
-                                <label>BANK</label>
-                                <select className="form-control" onChange={e => setBank(e.target.value)}>
-                                    <option value="">---Pilih Penyedia Bank---</option>
-                                    <option value="BCA">BCA</option>
-                                    <option value="BRI">BRI</option>
-                                    <option value="BNI">BNI</option>
-                                    <option value="Mandiri">Mandiri</option>
-                                </select>
+                        ((pay === '2') ?
+                            <div>
+                                <div className="form-group">
+                                    <label>BANK</label>
+                                    <select className="form-control" onChange={e => setBank(e.target.value)}>
+                                        <option value="">---Pilih Penyedia Bank---</option>
+                                        <option value="BCA">BCA</option>
+                                        <option value="BRI">BRI</option>
+                                        <option value="BNI">BNI</option>
+                                        <option value="Mandiri">Mandiri</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>Nomor Kartu Debit/Kredit <span className="text-danger">*</span></label>
+                                    <input type="number" className="form-control" placeholder="Masukan nomor kartu" onChange={e => setDebit(e.target.value)} />
+                                </div>
+                                <div className="form-group">
+                                    <label>Approval Code <span className="text-danger">*</span></label>
+                                    <input type="text" className="form-control" placeholder="Masukan kode approval" onChange={e => setCode(e.target.value)} value={code} />
+                                </div>
                             </div>
+                            :
                             <div className="form-group">
-                                <label>Nomor Kartu Debit/Kredit <span className="text-danger">*</span></label>
-                                <input type="number" className="form-control" placeholder="Masukan nomor kartu" onChange={e => setDebit(e.target.value)} />
+                                <label>Sisa Saldo</label>
+                                <input type="text" className="form-control" readOnly value={numberFormat(member.member_saldo)} />
                             </div>
-                            <div className="form-group">
-                                <label>Approval Code <span className="text-danger">*</span></label>
-                                <input type="text" className="form-control" placeholder="Masukan kode approval" onChange={e => setCode(e.target.value)} value={code} />
-                            </div>
-                        </div>
+                        )
                     }
                 </Modal.Body>
                 <Modal.Footer>

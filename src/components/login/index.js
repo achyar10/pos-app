@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { fetchPost } from '../../helpers'
-import { login } from '../../Endpoint'
+import { login, checkEod } from '../../Endpoint'
 import Logo from '../../assets/img/logo.png'
 import './login.css'
 
@@ -20,7 +20,13 @@ const Login = (props) => {
         const response = await fetchPost(login, { nik, password })
         if (response.status) {
             localStorage.setItem('authJwt', response.data.token)
-            props.history.push('/')
+            const resEod = await fetchPost(checkEod, {})
+            if (resEod.status) {
+                props.history.push('/')
+            } else {
+                localStorage.removeItem('authJwt')
+                alert(resEod.message)
+            }
         } else {
             alert(response.message)
         }

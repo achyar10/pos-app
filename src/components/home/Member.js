@@ -75,7 +75,7 @@ const Member = (props) => {
                                         <td>{el.name}</td>
                                         <td>{el.phone}</td>
                                         <td>{moment(el.date).format('DD MMM YYYY')}</td>
-                                        <td>{numberFormat(el.saldo)}</td>
+                                        <td>{numberFormat(el.point)}</td>
                                         <td><button className="btn btn-success btn-sm" onClick={() => selectMember(el)}>Pilih</button></td>
                                     </tr>
                                 )}
