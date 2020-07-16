@@ -120,7 +120,7 @@ const Clerk = (props) => {
                                 <tr>
                                     <td className="font-weight-bold">Grand Total</td>
                                     <td className="font-weight-bold">:</td>
-                                    <td className="font-weight-bold">Rp. {numberFormat(data.total_trans - data.total_disc - data.total_retur + data.total_sedekah)}</td>
+                                    <td className="font-weight-bold">Rp. {numberFormat(data.total_trans - data.total_retur + data.total_sedekah)}</td>
                                 </tr>
                                 <tr>
                                     <td>Input Setoran</td>

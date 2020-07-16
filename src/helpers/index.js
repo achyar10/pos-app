@@ -61,5 +61,6 @@ export const printing = async (transactionId) => {
         }
     } catch (error) {
         console.log(error)
+        alert('Server time out!')
     }
 }

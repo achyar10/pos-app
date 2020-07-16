@@ -12,22 +12,30 @@ const Hold = (props) => {
     const hold = useSelector(state => state.hold)
 
     const getHolds = async () => {
-        const hit = await fetchGet(holdUrl)
-        if (hit.status) {
-            setHold(hit.data)
+        try {
+            const hit = await fetchGet(holdUrl)
+            if (hit.status) {
+                setHold(hit.data)
+            }
+        } catch (error) {
+            alert('Server timeout!')
         }
     }
 
     const handleHold = async (obj) => {
-        obj.items.map(el => el.sub_total = (el.sales * el.qty) - (el.disc * el.qty))
-        dispatch({ type: 'TRANS', payload: obj.items })
-        if (obj.memberId) {
-            dispatch({ type: 'MEMBER', payload: { memberId: obj.memberId, member_no: obj.member_no, member_fullname: obj.member_fullname } })
-        }
-        const res = await fetchDelete(holdUrl, { id: obj.id })
-        if (res.status) {
-            getHolds()
-            console.log('Delete hold berhasil')
+        try {
+            obj.items.map(el => el.sub_total = (el.sales * el.qty) - (el.disc * el.qty))
+            dispatch({ type: 'TRANS', payload: obj.items })
+            if (obj.memberId) {
+                dispatch({ type: 'MEMBER', payload: { memberId: obj.memberId, member_no: obj.member_no, member_fullname: obj.member_fullname } })
+            }
+            const res = await fetchDelete(holdUrl, { id: obj.id })
+            if (res.status) {
+                getHolds()
+                console.log('Delete hold berhasil')
+            }
+        } catch (error) {
+            alert('Server timeout!')
         }
     }
 

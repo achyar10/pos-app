@@ -29,26 +29,34 @@ const History = (props) => {
     }
 
     const getHistory = async () => {
-        const q = search
-        const hit = await fetchPost(histories, { q })
-        if (hit.status) {
-            setHistory(hit.data)
-        } else {
-            alert(hit.message)
+        try {
+            const q = search
+            const hit = await fetchPost(histories, { q })
+            if (hit.status) {
+                setHistory(hit.data)
+            } else {
+                alert(hit.message)
+            }
+        } catch (error) {
+            alert('Server timeout!')
         }
     }
 
     const handleRetur = async () => {
-        const check = await fetchPost(authorizes, { nik, password })
-        if (check.status) {
-            const res = await fetchPost(returs, { transId })
-            alert(res.message)
-            setNik('')
-            setPassword('')
-            getHistory()
-            handleClose()
-        } else {
-            alert(check.message)
+        try {
+            const check = await fetchPost(authorizes, { nik, password })
+            if (check.status) {
+                const res = await fetchPost(returs, { transId })
+                alert(res.message)
+                setNik('')
+                setPassword('')
+                getHistory()
+                handleClose()
+            } else {
+                alert(check.message)
+            }
+        } catch (error) {
+            alert('Server timeout!')
         }
     }
 

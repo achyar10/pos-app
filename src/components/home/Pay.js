@@ -72,13 +72,17 @@ const Pay = (props) => {
     }
 
     const hit = async (body) => {
-        const hit = await fetchPost(holdUrl, body)
-        if (hit.status) {
-            dispatch({ type: 'TRANS', payload: [] })
-            dispatch({ type: 'MEMBER', payload: null })
-            alert('Transaksi berhasil di tahan')
-        } else {
-            alert(hit.message)
+        try {
+            const hit = await fetchPost(holdUrl, body)
+            if (hit.status) {
+                dispatch({ type: 'TRANS', payload: [] })
+                dispatch({ type: 'MEMBER', payload: null })
+                alert('Transaksi berhasil di tahan')
+            } else {
+                alert(hit.message)
+            }
+        } catch (error) {
+            alert('Server timeout!')
         }
     }
 

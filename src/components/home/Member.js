@@ -20,12 +20,16 @@ const Member = (props) => {
     }
 
     const getMember = async () => {
-        const q = search
-        const hit = await fetchPost(memberListUrl, { q })
-        if (hit.status) {
-            setMember(hit.data)
-        } else {
-            alert(hit.message)
+        try {
+            const q = search
+            const hit = await fetchPost(memberListUrl, { q })
+            if (hit.status) {
+                setMember(hit.data)
+            } else {
+                alert(hit.message)
+            }
+        } catch (error) {
+            alert('Server timeout!')
         }
     }
 

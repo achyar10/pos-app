@@ -34,55 +34,67 @@ const Product = (props) => {
     }
 
     const getProduct = async () => {
-        const q = search
-        const hit = await fetchPost(itemUrl, { q })
-        if (hit.status) {
-            setProduct(hit.data)
-        } else {
-            alert(hit.message)
+        try {
+            const q = search
+            const hit = await fetchPost(itemUrl, { q })
+            if (hit.status) {
+                setProduct(hit.data)
+            } else {
+                alert(hit.message)
+            }
+        } catch (error) {
+            alert('Server timeout!')
         }
     }
 
     const scanner = async barcode => {
-        const hit = await fetchPost(scanUrl, { barcode })
-        if (hit.status) {
-            const item = hit.data
-            const index = trans.findIndex(e => e.productId === item.productId)
-            if (index === -1) {
-                dispatch({
-                    type: 'TRANS', payload: [...trans, {
-                        productId: item.productId,
-                        barcode: item.barcode,
-                        desc: item.desc,
-                        hpp: item.hpp,
-                        sales: item.sales,
-                        qty: 1,
-                        valueDisc: item.disc,
-                        disc: item.disc,
-                        sub_total: item.sales - item.disc
-                    }]
-                })
+        try {
+            const hit = await fetchPost(scanUrl, { barcode })
+            if (hit.status) {
+                const item = hit.data
+                const index = trans.findIndex(e => e.productId === item.productId)
+                if (index === -1) {
+                    dispatch({
+                        type: 'TRANS', payload: [...trans, {
+                            productId: item.productId,
+                            barcode: item.barcode,
+                            desc: item.desc,
+                            hpp: item.hpp,
+                            sales: item.sales,
+                            qty: 1,
+                            valueDisc: item.disc,
+                            disc: item.disc,
+                            sub_total: item.sales - item.disc
+                        }]
+                    })
+                } else {
+                    let copyData = [...trans]
+                    copyData[index].qty += 1
+                    copyData[index].disc = copyData[index].valueDisc * copyData[index].qty
+                    copyData[index].sub_total = (copyData[index].sales * copyData[index].qty) - copyData[index].disc
+                    dispatch({ type: 'TRANS', payload: copyData })
+                }
             } else {
-                let copyData = [...trans]
-                copyData[index].qty += 1
-                copyData[index].disc = copyData[index].valueDisc * copyData[index].qty
-                copyData[index].sub_total = (copyData[index].sales * copyData[index].qty) - copyData[index].disc
-                dispatch({ type: 'TRANS', payload: copyData })
+                alert('Data produk tidak ditemukan!')
             }
-        } else {
-            alert('Data produk tidak ditemukan!')
+        } catch (error) {
+            alert('Server timeout!')
         }
     }
 
     const handleUpdate = async () => {
-        setButtonName('Proses Update...')
-        setDisable(true)
-        const token = localStorage.getItem('authJwt')
-        const res = await fetchPost(itemUpdateUrl, { token })
-        if (res.status) {
-            setButtonName('Update Produk')
-            setDisable(false)
-            alert('Update produk selesai')
+        try {
+            setButtonName('Proses Update...')
+            setDisable(true)
+            const token = localStorage.getItem('authJwt')
+            const res = await fetchPost(itemUpdateUrl, { token })
+            if (res.status) {
+                setButtonName('Update Produk')
+                setDisable(false)
+                alert('Update produk selesai')
+            }
+        } catch (error) {
+            alert('Server timeout!')
         }
     }
 

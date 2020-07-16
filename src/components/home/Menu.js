@@ -5,15 +5,15 @@ import product from '../../assets/img/product.png'
 import open from '../../assets/img/open.png'
 import clerek from '../../assets/img/clerek.png'
 import ecommerce from '../../assets/img/ecommerce.png'
-import { numberFormat, reduce, printing, fetchPost } from '../../helpers'
+import { numberFormat, reduce, printing, fetchPost, fetchPut } from '../../helpers'
 import { Modal, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
-import { transUrl } from '../../Endpoint'
+import { transUrl, smartMemberUrl } from '../../Endpoint'
 
 const Menu = (props) => {
 
     const [show, setShow] = useState(false)
-    const [pay, setPay] = useState('1')
+    const [pay, setPay] = useState('CASH')
     const [cash, setCash] = useState('')
     const [cashback, setCashback] = useState(0)
     const [sedekah, setSedekah] = useState(0)
@@ -25,6 +25,7 @@ const Menu = (props) => {
     const [disable, setDisable] = useState(true)
     const [finish, setFinish] = useState(false)
     const [transId, setTransId] = useState(null)
+    const [partials, setPartial] = useState([])
     const [money, setMoney] = useState([])
     const trans = useSelector(state => state.trans)
     const member = useSelector(state => state.member)
@@ -33,7 +34,7 @@ const Menu = (props) => {
 
     useEffect(() => {
 
-    }, [pay, transId])
+    }, [pay, transId, partials])
 
     const handlePay = () => {
         if (data.sub_total > 0) {
@@ -70,13 +71,13 @@ const Menu = (props) => {
     const handleCheck = (e) => {
         const val = e.target.value
         setPay(val)
-        if (val === '3') {
+        if (val === 'MEMBER') {
             if (member.member_saldo > data.sub_total) {
                 setDisable(false)
             } else {
                 setDisable(true)
             }
-        } else if (val === '2') {
+        } else if (val === 'DEBIT/CREDIT') {
             setDisable(false)
         } else {
             setDisable(true)
@@ -113,46 +114,90 @@ const Menu = (props) => {
         setCashback(total)
     }
 
-    const bayar = () => {
-        let details = []
-        trans.forEach(el => {
-            details.push({
-                productId: el.productId,
-                barcode: el.barcode,
-                desc: el.desc,
-                qty: el.qty,
-                hpp: el.hpp,
-                sales: el.sales,
-                disc: el.disc
-            })
-        });
-        const snap = {
-            memberId: (member) ? member.memberId : null,
-            member_no: (member) ? member.member_no : null,
-            member_fullname: (member) ? member.member_fullname : null,
-            member_kind: (member) ? member.member_kind : null,
-            payment_method: (pay === '1') ? 'CASH' : ((pay === '2') ? 'DEBIT/CREDIT' : 'MEMBER'),
-            cash: (pay === '1') ? cash : 0,
-            sedekah, bank, ccno: debit, code,
-            items: details
+    const bayar = async () => {
+        try {
+            let details = []
+            trans.forEach(el => {
+                details.push({
+                    productId: el.productId,
+                    barcode: el.barcode,
+                    desc: el.desc,
+                    qty: el.qty,
+                    hpp: el.hpp,
+                    sales: el.sales,
+                    disc: el.disc
+                })
+            });
+            const snap = {
+                memberId: (member) ? member.memberId : null,
+                member_no: (member) ? member.member_no : null,
+                member_fullname: (member) ? member.member_fullname : null,
+                member_kind: (member) ? member.member_kind : null,
+                payment_method: (partials.length > 0) ? 'PARTIAL' : pay,
+                cash: (pay === 'CASH') ? cash : 0,
+                sedekah, bank, ccno: debit, code,
+                items: details, partials
+            }
+            if (member) {
+                if (member.member_kind === 'smart') {
+                    let grand_total = data.sub_total
+                    if (snap.payment_method === 'PARTIAL') {
+                        for (const el of partials) {
+                            if (el.method_name === 'MEMBER') {
+                                grand_total = el.amount
+                            }
+                        }
+                    }
+                    const body = {
+                        memberId: member.memberId,
+                        amount: grand_total
+                    }
+                    const res = await fetchPut(smartMemberUrl, body)
+                    if (!res.status) {
+                        return alert(res.message)
+                    }
+                }
+            }
+            hit(snap)
+        } catch (error) {
+            alert('Server timeout!')
         }
-        hit(snap)
     }
 
     const hit = async (body) => {
-        const hit = await fetchPost(transUrl, body)
-        if (hit.status) {
-            let id = hit.data
-            setFinish(true)
-            setTransId(id)
-            printing(id)
-        } else {
-            alert(hit.message)
+        try {
+            const hit = await fetchPost(transUrl, body)
+            if (hit.status) {
+                let id = hit.data
+                setFinish(true)
+                setTransId(id)
+                printing(id)
+            } else {
+                alert(hit.message)
+            }
+        } catch (error) {
+            alert('Server timeout!')
         }
     }
 
     const handlePrint = () => {
         printing(transId)
+    }
+
+    const handleRemain = () => {
+        setPartial([
+            {
+                method_name: pay,
+                amount: (pay === 'MEMBER') ? member.member_saldo : data.sub_total
+            },
+            {
+                method_name: 'CASH',
+                amount: (member) ? data.sub_total - member.member_saldo : 0
+            }
+        ])
+        setDisable(false)
+        const btnRemain = document.getElementById('btnRemain')
+        btnRemain.style.display = 'none'
     }
 
     function right(str, chr) {
@@ -212,59 +257,86 @@ const Menu = (props) => {
                 </Modal.Header>
                 <Modal.Body>
                     <div className="form-group">
-                        <label><input type="radio" name="type" value="1" defaultChecked={(pay === '1') ? true : false} onChange={e => handleCheck(e)} /> Tunai</label><br />
-                        <label><input type="radio" name="type" value="2" defaultChecked={(pay === '2') ? true : false} onChange={e => handleCheck(e)} /> Debit/Kredit</label><br />
-                        {(!member) ? null : <label><input type="radio" name="type" value="3" defaultChecked={(pay === '3') ? true : false} onChange={e => handleCheck(e)} /> Kartu Member</label>}
+                        <select id="pay" className="form-control" onChange={e => handleCheck(e)}>
+                            <option value="CASH">Tunai</option>
+                            <option value="DEBIT/CREDIT">Debit/Kredit</option>
+                            {(member) ? <option value="MEMBER">Kartu Smart</option> : null}
+                            <option value="VOUCHER">Voucher</option>
+                            {/* <option value="PARTIAL">Parsial</option> */}
+                        </select>
                     </div>
                     <hr />
-                    {(pay === '1') ?
-                        <div>
-                            <div className="form-group mt-2">
-                                <label>Uang Tunai <span className="text-danger">*</span></label><br />
-                                <Button variant="success" size="sm" className="ml-2 mt-1" onClick={() => handleCash(data.sub_total)}>{numberFormat(data.sub_total)}</Button>
-                                {money.map(el => (
-                                    <Button key={el} variant="success" size="sm" className="ml-2 mt-1" onClick={() => handleCash(el)}>{numberFormat(el)}</Button>
-                                ))}
-                                <input type="text" className="form-control mt-2" placeholder="atau input manual disini" onChange={e => cashBack(e)} value={cash} />
-                            </div>
-                            <div className="form-group">
-                                <label>Sedekah</label>
-                                <input type="text" className="form-control" placeholder="Masukan nominal sedekah" onChange={e => donate(e)} />
-                            </div>
-                            <div className="form-group">
-                                <label>Kembalian</label>
-                                <input type="text" className="form-control" readOnly value={numberFormat(cashback)} />
-                            </div>
-                        </div>
-                        :
-                        ((pay === '2') ?
-                            <div>
-                                <div className="form-group">
-                                    <label>BANK</label>
-                                    <select className="form-control" onChange={e => setBank(e.target.value)}>
-                                        <option value="">---Pilih Penyedia Bank---</option>
-                                        <option value="BCA">BCA</option>
-                                        <option value="BRI">BRI</option>
-                                        <option value="BNI">BNI</option>
-                                        <option value="Mandiri">Mandiri</option>
-                                    </select>
-                                </div>
-                                <div className="form-group">
-                                    <label>Nomor Kartu Debit/Kredit <span className="text-danger">*</span></label>
-                                    <input type="number" className="form-control" placeholder="Masukan nomor kartu" onChange={e => setDebit(e.target.value)} />
-                                </div>
-                                <div className="form-group">
-                                    <label>Approval Code <span className="text-danger">*</span></label>
-                                    <input type="text" className="form-control" placeholder="Masukan kode approval" onChange={e => setCode(e.target.value)} value={code} />
-                                </div>
-                            </div>
-                            :
-                            <div className="form-group">
-                                <label>Sisa Saldo</label>
-                                <input type="text" className="form-control" readOnly value={numberFormat(member.member_saldo)} />
-                            </div>
-                        )
-                    }
+                    {(() => {
+                        switch (pay) {
+                            case 'CASH':
+                                return (<div>
+                                    <div className="form-group mt-2">
+                                        <label>Uang Tunai <span className="text-danger">*</span></label><br />
+                                        <Button variant="success" size="sm" className="ml-2 mt-1" onClick={() => handleCash(data.sub_total)}>{numberFormat(data.sub_total)}</Button>
+                                        {money.map(el => (
+                                            <Button key={el} variant="success" size="sm" className="ml-2 mt-1" onClick={() => handleCash(el)}>{numberFormat(el)}</Button>
+                                        ))}
+                                        <input type="text" className="form-control mt-2" placeholder="atau input manual disini" onChange={e => cashBack(e)} value={cash} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Sedekah</label>
+                                        <input type="text" className="form-control" placeholder="Masukan nominal sedekah" onChange={e => donate(e)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Kembalian</label>
+                                        <input type="text" className="form-control" readOnly value={numberFormat(cashback)} />
+                                    </div>
+                                </div>)
+                            case 'DEBIT/CREDIT':
+                                return (
+                                    <div>
+                                        <div className="form-group">
+                                            <label>BANK</label>
+                                            <select className="form-control" onChange={e => setBank(e.target.value)}>
+                                                <option value="">---Pilih Penyedia Bank---</option>
+                                                <option value="BCA">BCA</option>
+                                                <option value="BRI">BRI</option>
+                                                <option value="BNI">BNI</option>
+                                                <option value="Mandiri">Mandiri</option>
+                                            </select>
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Nomor Kartu Debit/Kredit <span className="text-danger">*</span></label>
+                                            <input type="number" className="form-control" placeholder="Masukan nomor kartu" onChange={e => setDebit(e.target.value)} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Approval Code <span className="text-danger">*</span></label>
+                                            <input type="text" className="form-control" placeholder="Masukan kode approval" onChange={e => setCode(e.target.value)} value={code} />
+                                        </div>
+                                    </div>
+                                )
+                            case 'MEMBER':
+                                return (<div>
+                                    <div className="form-group">
+                                        <label>Sisa Saldo</label>
+                                        <input type="text" className="form-control" readOnly value={numberFormat(member.member_saldo)} />
+                                    </div>
+                                    {(member.member_saldo < data.sub_total) ?
+                                        <Button id="btnRemain" variant="success" size="sm" onClick={() => handleRemain()}>Tambah Sisa Tagihan</Button>
+                                        : null
+                                    }
+                                    {partials.map((el, i) => (
+                                        <div className="form-group" key={i}>
+                                            <label>{el.method_name}</label>
+                                            <input type="number" className="form-control" readOnly value={numberFormat(el.amount)} />
+                                        </div>
+                                    ))}
+                                </div>)
+                            case 'PARTIAL':
+                                return (<div>
+                                    <p>Belum Tersedia</p>
+                                </div>)
+                            default:
+                                return (<div className="form-group">
+                                    <p>Belum Tersedia</p>
+                                </div>)
+                        }
+                    })()}
                 </Modal.Body>
                 <Modal.Footer>
                     {(!finish) ?

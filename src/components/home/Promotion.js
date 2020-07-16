@@ -12,10 +12,14 @@ const Promotion = (props) => {
     const [loading, setLoading] = useState(false)
 
     const fetchPromo = async () => {
-        setLoading(true)
-        const res = await fetchGet(promotionUrl)
-        setPromotion(res)
-        setLoading(false)
+        try {
+            setLoading(true)
+            const res = await fetchGet(promotionUrl)
+            setPromotion(res)
+            setLoading(false)
+        } catch (error) {
+            alert('Server timeout!')
+        }
     }
 
     useEffect(() => {
@@ -25,14 +29,18 @@ const Promotion = (props) => {
     }, [props.fetch])
 
     const handleUpdate = async () => {
-        setButtonName('Proses Update...')
-        setDisable(true)
-        const res = await fetchPost(promotionUrl, {})
-        if (res.status) {
-            setButtonName('Update Produk')
-            setDisable(false)
-            fetchPromo()
-            alert('Update promosi selesai')
+        try {
+            setButtonName('Proses Update...')
+            setDisable(true)
+            const res = await fetchPost(promotionUrl, {})
+            if (res.status) {
+                setButtonName('Update Produk')
+                setDisable(false)
+                fetchPromo()
+                alert('Update promosi selesai')
+            }
+        } catch (error) {
+            alert('Server timeout!')
         }
     }
 
