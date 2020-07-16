@@ -11,11 +11,6 @@ const Auth = (props) => {
 
     useEffect(() => {
         const getUser = async () => {
-            const jwt = 'Bearer ' + localStorage.getItem('authJwt')
-            if (!jwt) {
-                dispatch({ type: 'SESSION', payload: null })
-                return
-            }
             const response = await fetchGet(check)
             if (response.status) {
                 dispatch({ type: 'SESSION', payload: response.data })
@@ -24,7 +19,7 @@ const Auth = (props) => {
         getUser()
     }, [dispatch])
 
-    if (user === undefined || user === null) {
+    if (!user) {
         localStorage.removeItem('authJwt')
         return (<Redirect to={'/login'} />)
     }

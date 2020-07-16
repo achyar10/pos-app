@@ -28,7 +28,7 @@
 .btn-bayar {
     margin-top: -30px;
     height: 70px;
-    width: 280px;
+    width: 100%;
 }
 .table-bayar {
     border-radius: 15px !important;
@@ -42,5 +42,5 @@
 }
 
 .over-flow{
-    width:auto; height:400px; overflow:auto;
+    height:400px; overflow:auto;
 }

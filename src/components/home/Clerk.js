@@ -63,7 +63,7 @@ const Clerk = (props) => {
 
     const handleSetor = (e) => {
         const setoran = parseInt(e.target.value) || 0
-        const grand_total = data.total_trans - data.total_disc - data.total_retur + data.total_sedekah
+        const grand_total = data.total_trans - data.total_retur + data.total_sedekah
         setSelisih(setoran - grand_total)
     }
 
