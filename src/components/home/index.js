@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux'
 
 const Home = (props) => {
 
-    const title = 'POS - Home'
+    const title = 'POS - Dahanta'
 
     useEffect(() => {
         document.title = title
