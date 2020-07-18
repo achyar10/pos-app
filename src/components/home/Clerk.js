@@ -37,7 +37,7 @@ const Clerk = (props) => {
     }
 
     const handleClerk = async () => {
-        const grand_total = data.total_trans - data.total_disc - data.total_retur + data.total_sedekah
+        const grand_total = data.total_trans - data.total_retur + data.total_sedekah
         let body = {
             ...data, ...{
                 grand_total, setoran: grand_total + selisih
