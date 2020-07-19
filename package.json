@@ -1,6 +1,13 @@
 {
-  "name": "pos-app",
-  "version": "0.1.0",
+  "name": "dahanta-pos",
+  "version": "2.0.0",
+  "description": "POS App React JS",
+  "author": "Achyar Anshorie",
+  "build": {
+    "appId": "pos.react"
+  },
+  "main": "public/electron.js",
+  "homepage": "./",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
@@ -8,6 +15,8 @@
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.19.2",
     "bootstrap": "^4.5.0",
+    "cross-env": "^7.0.2",
+    "electron-is-dev": "^1.2.0",
     "font-awesome": "^4.7.0",
     "immutability-helper": "^3.1.1",
     "js-scanner-detection": "^1.0.3",
@@ -26,10 +35,13 @@
     "redux": "^4.0.5"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start-react": "react-scripts start",
+    "build-react": "react-scripts build",
+    "test-react": "react-scripts test --env=jsdom",
+    "eject-react": "react-scripts eject",
+    "build-electron": "electron-builder",
+    "build": "npm run build-react && npm run build-electron",
+    "start": "concurrently \"cross-env BROWSER=none npm run start-react\" \"wait-on http://localhost:3000 && electron .\""
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -46,5 +58,10 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "concurrently": "^5.2.0",
+    "electron": "^9.1.0",
+    "electron-builder": "^22.7.0",
+    "wait-on": "^5.1.0"
+  }
 }

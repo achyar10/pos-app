@@ -102,7 +102,7 @@ const Product = (props) => {
     return (
         <>
             <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg'>
-                <Modal.Header>
+                <Modal.Header closeButton>
                     <Modal.Title>Semua Produk
                         <Button variant="danger" className="btn-sm ml-2" onClick={handleUpdate} disabled={disable}>{buttonName}</Button>
                         <Button variant="warning" className="btn-sm ml-2 text-white" onClick={handleShow}>{'Promo'}</Button>
