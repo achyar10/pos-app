@@ -3,7 +3,7 @@ import { Modal, Button } from 'react-bootstrap'
 import { clerks } from '../../Endpoint'
 import { numberFormat, fetchPost, fetchGet } from '../../helpers'
 import { useSelector, useDispatch } from 'react-redux'
-import { Redirect } from 'react-router-dom'
+import { withRouter  } from 'react-router-dom'
 
 const Clerk = (props) => {
 
@@ -53,7 +53,7 @@ const Clerk = (props) => {
             dispatch({ type: 'TRANS', payload: [] })
             dispatch({ type: 'MEMBER', payload: null })
             localStorage.removeItem('authJwt')
-            return (<Redirect to="/" />)
+            props.history.push('/login')
         } else {
             setDisable(false)
             setButtonName('Proses Clerk')
@@ -151,4 +151,4 @@ const Clerk = (props) => {
     )
 
 }
-export default Clerk
+export default withRouter(Clerk)
