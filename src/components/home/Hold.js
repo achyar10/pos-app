@@ -24,7 +24,10 @@ const Hold = (props) => {
 
     const handleHold = async (obj) => {
         try {
-            obj.items.map(el => el.sub_total = (el.sales * el.qty) - (el.disc * el.qty))
+            obj.items.forEach(el => {
+                el.sub_total = (el.sales * el.qty) - (el.disc * el.qty)
+                el.valueDisc = el.disc * el.qty
+            })
             dispatch({ type: 'TRANS', payload: obj.items })
             if (obj.memberId) {
                 dispatch({ type: 'MEMBER', payload: { memberId: obj.memberId, member_no: obj.member_no, member_fullname: obj.member_fullname } })
@@ -46,7 +49,7 @@ const Hold = (props) => {
 
     return (
         <div>
-            <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg'>
+            <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg' animation={false}>
                 <Modal.Header closeButton>
                     <Modal.Title>Daftar Transaksi Hold</Modal.Title>
                 </Modal.Header>

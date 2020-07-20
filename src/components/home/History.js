@@ -62,7 +62,7 @@ const History = (props) => {
 
     return (
         <>
-            <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg'>
+            <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg' animation={false}>
                 <Modal.Header closeButton>
                     <Modal.Title>Daftar Transaksi Hari ini</Modal.Title>
                 </Modal.Header>

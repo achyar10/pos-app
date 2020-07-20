@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
-import { useDispatch } from 'react-redux'
 import { numberFormat, fetchPost } from '../../helpers'
 import { memberListUrl } from '../../Endpoint'
+import { useDispatch } from 'react-redux'
 import moment from 'moment'
 
 const Member = (props) => {
 
     const [members, setMember] = useState([])
     const [search, setSearch] = useState('')
-    const dispatch = useDispatch()
     useEffect(() => {
 
     }, [search])
+
+    const dispatch = useDispatch()
 
     const handleMember = (e) => {
         setSearch(e.target.value)
@@ -48,7 +49,7 @@ const Member = (props) => {
 
     return (
         <>
-            <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg'>
+            <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg' animation={false}>
                 <Modal.Header closeButton>
                     <Modal.Title>Daftar Member</Modal.Title>
                 </Modal.Header>
@@ -68,6 +69,7 @@ const Member = (props) => {
                                     <th>Nama</th>
                                     <th>No Member</th>
                                     <th>Tanggal Lahir</th>
+                                    <th>Saldo</th>
                                     <th>Point</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -79,8 +81,9 @@ const Member = (props) => {
                                         <td>{el.name}</td>
                                         <td>{el.phone}</td>
                                         <td>{moment(el.date).format('DD MMM YYYY')}</td>
+                                        <td>{numberFormat(el.saldo)}</td>
                                         <td>{numberFormat(el.point)}</td>
-                                        <td><button className="btn btn-success btn-sm" onClick={() => selectMember(el)}>Pilih</button></td>
+                                        <td><button className="btn btn-success btn-sm" onClick={() => props.close(selectMember(el))}>Pilih</button></td>
                                     </tr>
                                 )}
                             </tbody>
@@ -92,8 +95,6 @@ const Member = (props) => {
                 </Modal.Footer>
             </Modal>
         </>
-
     )
-
 }
 export default Member

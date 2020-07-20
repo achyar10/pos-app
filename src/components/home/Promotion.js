@@ -46,7 +46,7 @@ const Promotion = (props) => {
 
     return (
         <div>
-            <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg'>
+            <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg' animation={false}>
                 <Modal.Header closeButton>
                     <Modal.Title>Produk Promosi
                         <Button variant="danger" className="btn-sm ml-2" onClick={handleUpdate} disabled={disable}>{buttonName}</Button>

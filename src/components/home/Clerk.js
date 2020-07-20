@@ -3,6 +3,7 @@ import { Modal, Button } from 'react-bootstrap'
 import { clerks } from '../../Endpoint'
 import { numberFormat, fetchPost, fetchGet } from '../../helpers'
 import { useSelector, useDispatch } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 
 const Clerk = (props) => {
 
@@ -47,8 +48,12 @@ const Clerk = (props) => {
         setButtonName('Proses...')
         const res = await fetchPost(clerks, body)
         if (res.status) {
+            dispatch({ type: 'CLERK', payload: false })
+            dispatch({ type: 'HOLD', payload: false })
+            dispatch({ type: 'TRANS', payload: [] })
+            dispatch({ type: 'MEMBER', payload: null })
             localStorage.removeItem('authJwt')
-            window.location.href = '/login'
+            return (<Redirect to="/" />)
         } else {
             setDisable(false)
             setButtonName('Proses Clerk')
@@ -69,7 +74,7 @@ const Clerk = (props) => {
 
     return (
         <>
-            <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg'>
+            <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg' animation={false}>
                 <Modal.Header>
                     <Modal.Title>Sales per shift</Modal.Title>
                 </Modal.Header>

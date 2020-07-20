@@ -9,6 +9,7 @@ import Clerk from './Clerk'
 import Hold from './Hold'
 import { useDispatch } from 'react-redux'
 
+
 const Home = (props) => {
 
     const title = 'POS - Dahanta'
@@ -56,10 +57,6 @@ const Home = (props) => {
         }
     }
 
-    const handleFinish = () => {
-        window.location.href = '/'
-    }
-
     return (
         <div className="bck">
             <Navbar logout={handleLogout} />
@@ -69,7 +66,7 @@ const Home = (props) => {
                         <Pay />
                     </div>
                     <div className="col-md-3">
-                        <Menu redirect={handleFinish} product={handleModalProduct} history={handleModalProduct2} member={handleModalProduct3} clerk={handleModalProduct4} hold={handleModalProduct5} />
+                        <Menu product={handleModalProduct} history={handleModalProduct2} member={handleModalProduct3} clerk={handleModalProduct4} hold={handleModalProduct5} />
                     </div>
                 </div>
                 <Product show={show} close={handleClose} />

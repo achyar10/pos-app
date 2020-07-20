@@ -9,9 +9,12 @@ import { numberFormat, reduce, printing, fetchPost, fetchPut } from '../../helpe
 import { Modal, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import { transUrl, smartMemberUrl } from '../../Endpoint'
+import { Redirect } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 
 const Menu = (props) => {
 
+    const dispatch = useDispatch()
     const [show, setShow] = useState(false)
     const [pay, setPay] = useState('CASH')
     const [cash, setCash] = useState('')
@@ -200,6 +203,27 @@ const Menu = (props) => {
         btnRemain.style.display = 'none'
     }
 
+    const handleFinish = () => {
+        setShow(false)
+        setPay('CASH')
+        setCash(0)
+        setCashback(0)
+        setSedekah(0)
+        setDebit()
+        setCode('')
+        setBank()
+        setDisable(true)
+        setFinish(false)
+        setTransId(null)
+        setPartial([])
+        setMoney([])
+        dispatch({ type: 'CLERK', payload: false })
+        dispatch({ type: 'HOLD', payload: false })
+        dispatch({ type: 'TRANS', payload: [] })
+        dispatch({ type: 'MEMBER', payload: null })
+        return (<Redirect to="/" />)
+    }
+
     function right(str, chr) {
         return str.slice(str.length - chr, str.length);
     }
@@ -260,7 +284,7 @@ const Menu = (props) => {
                         <select id="pay" className="form-control" onChange={e => handleCheck(e)}>
                             <option value="CASH">Tunai</option>
                             <option value="DEBIT/CREDIT">Debit/Kredit</option>
-                            {(member) ? <option value="MEMBER">Kartu Smart</option> : null}
+                            {(member) ? ((member.member_kind === 'smart') ? <option value="MEMBER">Kartu Smart</option> : null) : null}
                             <option value="VOUCHER">Voucher</option>
                             {/* <option value="PARTIAL">Parsial</option> */}
                         </select>
@@ -311,22 +335,28 @@ const Menu = (props) => {
                                     </div>
                                 )
                             case 'MEMBER':
-                                return (<div>
-                                    <div className="form-group">
-                                        <label>Sisa Saldo</label>
-                                        <input type="text" className="form-control" readOnly value={numberFormat(member.member_saldo)} />
-                                    </div>
-                                    {(member.member_saldo < data.sub_total) ?
-                                        <Button id="btnRemain" variant="success" size="sm" onClick={() => handleRemain()}>Tambah Sisa Tagihan</Button>
-                                        : null
-                                    }
-                                    {partials.map((el, i) => (
-                                        <div className="form-group" key={i}>
-                                            <label>{el.method_name}</label>
-                                            <input type="number" className="form-control" readOnly value={numberFormat(el.amount)} />
+                                if (member) {
+                                    return (<div>
+                                        <div className="form-group">
+                                            <label>Sisa Saldo</label>
+                                            <input type="text" className="form-control" readOnly value={numberFormat(member.member_saldo)} />
                                         </div>
-                                    ))}
-                                </div>)
+                                        {(member.member_saldo < data.sub_total) ?
+                                            <Button id="btnRemain" variant="success" size="sm" onClick={() => handleRemain()}>Tambah Sisa Tagihan</Button>
+                                            : null
+                                        }
+                                        {partials.map((el, i) => (
+                                            <div className="form-group" key={i}>
+                                                <label>{el.method_name}</label>
+                                                <input type="number" className="form-control" readOnly value={numberFormat(el.amount)} />
+                                            </div>
+                                        ))}
+                                    </div>)
+                                } else {
+                                    return (<div>
+                                        <p>Bukan Member Smart</p>
+                                    </div>)
+                                }
                             case 'PARTIAL':
                                 return (<div>
                                     <p>Belum Tersedia</p>
@@ -348,7 +378,7 @@ const Menu = (props) => {
                         </div>
                         :
                         <div>
-                            <Button variant="secondary" onClick={props.redirect}>Selesai</Button>
+                            <Button variant="secondary" onClick={handleFinish}>Selesai</Button>
                             <Button variant="success" className="ml-3" onClick={handlePrint}>Print Struk</Button>
                         </div>
                     }

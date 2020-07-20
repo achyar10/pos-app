@@ -98,10 +98,9 @@ const Product = (props) => {
         }
     }
 
-
     return (
         <>
-            <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg'>
+            <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg' animation={false}>
                 <Modal.Header closeButton>
                     <Modal.Title>Semua Produk
                         <Button variant="danger" className="btn-sm ml-2" onClick={handleUpdate} disabled={disable}>{buttonName}</Button>
@@ -132,7 +131,7 @@ const Product = (props) => {
                                         <td>{el.barcode}</td>
                                         <td>{el.desc}</td>
                                         <td>{numberFormat(el.sales)}</td>
-                                        <td><button className="btn btn-sm btn-primary" onClick={e => scanner(el.barcode)}>Pilih</button></td>
+                                        <td><button className="btn btn-sm btn-primary" onClick={() => props.close(scanner(el.barcode))}>Pilih</button></td>
                                     </tr>
                                 )}
                             </tbody>
