@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Modal, Button } from 'react-bootstrap'
-import { numberFormat, fetchGet, fetchDelete } from '../../helpers'
+import { numberFormat, fetchGet, fetchDelete, Alert } from '../../helpers'
 import { holdUrl } from '../../Endpoint'
 import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
@@ -18,7 +18,7 @@ const Hold = (props) => {
                 setHold(hit.data)
             }
         } catch (error) {
-            alert('Server timeout!')
+            Alert('Server timeout!')
         }
     }
 
@@ -38,7 +38,7 @@ const Hold = (props) => {
                 console.log('Delete hold berhasil')
             }
         } catch (error) {
-            alert('Server timeout!')
+            Alert('Server timeout!')
         }
     }
 

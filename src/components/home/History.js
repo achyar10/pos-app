@@ -1,64 +1,65 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import { histories, returs, authorizes } from '../../Endpoint'
-import { numberFormat, printing, fetchPost } from '../../helpers'
+import { numberFormat, printing, fetchGet, fetchPost, Alert } from '../../helpers'
+import { debounce } from 'lodash'
+import Pagination from 'react-js-pagination'
 
 const History = (props) => {
 
-    const [histori, setHistory] = useState([])
-    const [search, setSearch] = useState('')
+    const [data, setData] = useState([])
+    const [page, setPage] = useState(1)
+    const [totalPage, setTotalPage] = useState(0)
+    const [q, setQ] = useState('')
     const [nik, setNik] = useState('')
     const [password, setPassword] = useState('')
     const [transId, setTransId] = useState('')
     const [show, setShow] = useState(false)
+    const [isLoading, setLoading] = useState(false)
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
 
     useEffect(() => {
-
-    }, [search])
-
-    const handleHistory = (e) => {
-        setSearch(e.target.value)
-        getHistory()
-    }
+        const fetch = async () => {
+            try {
+                const hit = await fetchGet(`${histories}?page=${page}&q=${q}`)
+                setData(hit.docs)
+                setPage(page)
+                setTotalPage(hit.total)
+            } catch (error) {
+                Alert('Server timeout!')
+            }
+        }
+        fetch()
+    }, [page, q, props, isLoading])
 
     const showModal = (id) => {
         handleShow()
         setTransId(id)
     }
 
-    const getHistory = async () => {
-        try {
-            const q = search
-            const hit = await fetchPost(histories, { q })
-            if (hit.status) {
-                setHistory(hit.data)
-            } else {
-                alert(hit.message)
-            }
-        } catch (error) {
-            alert('Server timeout!')
-        }
-    }
-
     const handleRetur = async () => {
         try {
+            setLoading(true)
             const check = await fetchPost(authorizes, { nik, password })
             if (check.status) {
                 const res = await fetchPost(returs, { transId })
-                alert(res.message)
+                Alert(res.message)
                 setNik('')
                 setPassword('')
-                getHistory()
                 handleClose()
             } else {
-                alert(check.message)
+                Alert(check.message)
             }
+            setLoading(false)
         } catch (error) {
-            alert('Server timeout!')
+            Alert('Server timeout!')
         }
     }
+
+    const handleSearch = debounce((val) => {
+        setQ(val)
+    }, 500)
 
     return (
         <>
@@ -72,7 +73,7 @@ const History = (props) => {
                             <button className="btn btn-info" type="button"><span
                                 className="fa fa-search"></span></button>
                         </div>
-                        <input type="text" className="form-control" placeholder="Ketik nomor transaksi..." onChange={e => handleHistory(e)} />
+                        <input type="text" className="form-control" placeholder="Ketik nomor transaksi..." onChange={e => handleSearch(e.target.value)} />
                     </div>
                     <div className="table-responsive">
                         <table className="table table-sm table-hover table-striped">
@@ -84,11 +85,12 @@ const History = (props) => {
                                     <th>Diskon</th>
                                     <th>Grand Total</th>
                                     <th>Retur</th>
+                                    <th>Transfer</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {histori.map((el, i) =>
+                                {data.map((el, i) =>
                                     <tr key={i}>
                                         <td>{i + 1}</td>
                                         <td>{el.no_trans}</td>
@@ -96,6 +98,7 @@ const History = (props) => {
                                         <td>{numberFormat(el.total_discount)}</td>
                                         <td>{numberFormat(el.grand_total + el.total_discount)}</td>
                                         <td>{(el.retur) ? 'Ya' : 'Tidak'}</td>
+                                        <td>{(el.transfer) ? 'Ya' : 'Tidak'}</td>
                                         <td>
                                             <button className="btn btn-success btn-sm" onClick={() => printing(el.id)}>Reprint</button>
                                             {(!el.retur) ? <button className="btn btn-danger btn-sm ml-1" onClick={() => showModal(el.id)}>Retur</button> : ''}
@@ -105,6 +108,15 @@ const History = (props) => {
                             </tbody>
                         </table>
                     </div>
+                    <Pagination
+                        itemClass="page-item"
+                        linkClass="page-link"
+                        activePage={page}
+                        itemsCountPerPage={5}
+                        totalItemsCount={totalPage}
+                        pageRangeDisplayed={5}
+                        onChange={(page) => setPage(page)}
+                    />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={props.close}>Tutup</Button>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
-import { numberFormat, fetchPost } from '../../helpers'
+import { numberFormat, fetchPost, Alert } from '../../helpers'
 import { memberListUrl } from '../../Endpoint'
 import { useDispatch } from 'react-redux'
 import moment from 'moment'
@@ -27,10 +27,10 @@ const Member = (props) => {
             if (hit.status) {
                 setMember(hit.data)
             } else {
-                alert(hit.message)
+                Alert(hit.message)
             }
         } catch (error) {
-            alert('Server timeout!')
+            Alert('Server timeout!')
         }
     }
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
-import { numberFormat, fetchPost } from '../../helpers'
+import { numberFormat, fetchPost, Alert } from '../../helpers'
 import Promotion from './Promotion'
 import { useSelector, useDispatch } from 'react-redux'
 import { scanUrl, itemUpdateUrl, itemUrl } from '../../Endpoint'
@@ -40,10 +40,10 @@ const Product = (props) => {
             if (hit.status) {
                 setProduct(hit.data)
             } else {
-                alert(hit.message)
+                Alert(hit.message)
             }
         } catch (error) {
-            alert('Server timeout!')
+            Alert('Server timeout!')
         }
     }
 
@@ -75,10 +75,10 @@ const Product = (props) => {
                     dispatch({ type: 'TRANS', payload: copyData })
                 }
             } else {
-                alert('Data produk tidak ditemukan!')
+                Alert('Data produk tidak ditemukan!')
             }
         } catch (error) {
-            alert('Server timeout!')
+            Alert('Server timeout!')
         }
     }
 
@@ -91,10 +91,10 @@ const Product = (props) => {
             if (res.status) {
                 setButtonName('Update Produk')
                 setDisable(false)
-                alert('Update produk selesai')
+                Alert('Update produk selesai')
             }
         } catch (error) {
-            alert('Server timeout!')
+            Alert('Server timeout!')
         }
     }
 

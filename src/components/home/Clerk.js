@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import { clerks } from '../../Endpoint'
-import { numberFormat, fetchPost, fetchGet } from '../../helpers'
+import { numberFormat, fetchPost, fetchGet, Alert } from '../../helpers'
 import { useSelector, useDispatch } from 'react-redux'
 import { withRouter  } from 'react-router-dom'
 
@@ -33,7 +33,7 @@ const Clerk = (props) => {
         if (hit.status) {
             setData(hit.data)
         } else {
-            alert(hit.message)
+            Alert(hit.message)
         }
     }
 
@@ -57,7 +57,7 @@ const Clerk = (props) => {
         } else {
             setDisable(false)
             setButtonName('Proses Clerk')
-            alert('Server time out!')
+            Alert('Server time out!')
         }
     }
 

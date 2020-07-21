@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { fetchPost } from '../../helpers'
+import { fetchPost, Alert } from '../../helpers'
 import { login, checkEod } from '../../Endpoint'
 import Logo from '../../assets/img/logo.png'
 import './login.css'
@@ -15,8 +15,8 @@ const Login = (props) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        if (nik === '') return alert('Nik cannot be empty')
-        if (password === '') return alert('Password cannot be empty')
+        if (nik === '') return Alert('Nik cannot be empty')
+        if (password === '') return Alert('Password cannot be empty')
         const response = await fetchPost(login, { nik, password })
         if (response.status) {
             localStorage.setItem('authJwt', response.data.token)
@@ -25,10 +25,10 @@ const Login = (props) => {
                 props.history.push('/')
             } else {
                 localStorage.removeItem('authJwt')
-                alert(resEod.message)
+                Alert(resEod.message)
             }
         } else {
-            alert(response.message)
+            Alert(response.message)
         }
     }
 

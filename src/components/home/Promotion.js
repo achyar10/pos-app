@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import DataPromo from './DataPromo'
 import { promotionUrl } from '../../Endpoint'
-import { fetchGet, fetchPost } from '../../helpers'
+import { fetchGet, fetchPost, Alert } from '../../helpers'
 
 const Promotion = (props) => {
 
@@ -18,7 +18,7 @@ const Promotion = (props) => {
             setPromotion(res)
             setLoading(false)
         } catch (error) {
-            alert('Server timeout!')
+            Alert('Server timeout!')
         }
     }
 
@@ -37,10 +37,10 @@ const Promotion = (props) => {
                 setButtonName('Update Produk')
                 setDisable(false)
                 fetchPromo()
-                alert('Update promosi selesai')
+                Alert('Update promosi selesai')
             }
         } catch (error) {
-            alert('Server timeout!')
+            Alert('Server timeout!')
         }
     }
 

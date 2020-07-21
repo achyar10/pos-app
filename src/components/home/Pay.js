@@ -1,20 +1,15 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import ScannerDetector from 'js-scanner-detection'
-import { numberFormat, reduce, fetchPost } from '../../helpers'
+import { numberFormat, reduce, fetchPost, Alert } from '../../helpers'
 import { scanUrl, holdUrl } from '../../Endpoint'
 import { useSelector, useDispatch } from 'react-redux'
 import './home.css'
 
-const Pay = (props) => {
+const Pay = () => {
 
     const trans = useSelector(state => state.trans)
     const member = useSelector(state => state.member)
     const dispatch = useDispatch()
-
-    useEffect(() => {
-
-    }, [])
-
 
     const scanner = async barcode => {
         const hit = await fetchPost(scanUrl, { barcode })
@@ -43,32 +38,30 @@ const Pay = (props) => {
                 dispatch({ type: 'TRANS', payload: copyData })
             }
         } else {
-            alert('Data produk tidak ditemukan!')
+            Alert('Data produk tidak ditemukan!')
         }
     }
 
     const handleHold = () => {
-        if (window.confirm('Apakah anda akan menahan transaksi ini?')) {
-            let details = []
-            trans.forEach(el => {
-                details.push({
-                    productId: el.productId,
-                    barcode: el.barcode,
-                    desc: el.desc,
-                    qty: el.qty,
-                    hpp: el.hpp,
-                    sales: el.sales,
-                    disc: el.disc
-                })
-            });
-            const snap = {
-                memberId: (member) ? member.memberId : null,
-                member_no: (member) ? member.member_no : null,
-                member_fullname: (member) ? member.member_fullname : null,
-                items: details
-            }
-            hit(snap)
+        let details = []
+        trans.forEach(el => {
+            details.push({
+                productId: el.productId,
+                barcode: el.barcode,
+                desc: el.desc,
+                qty: el.qty,
+                hpp: el.hpp,
+                sales: el.sales,
+                disc: el.disc
+            })
+        });
+        const snap = {
+            memberId: (member) ? member.memberId : null,
+            member_no: (member) ? member.member_no : null,
+            member_fullname: (member) ? member.member_fullname : null,
+            items: details
         }
+        hit(snap)
     }
 
     const hit = async (body) => {
@@ -77,12 +70,12 @@ const Pay = (props) => {
             if (hit.status) {
                 dispatch({ type: 'TRANS', payload: [] })
                 dispatch({ type: 'MEMBER', payload: null })
-                alert('Transaksi berhasil di tahan')
+                Alert('Transaksi berhasil di tahan')
             } else {
-                alert(hit.message)
+                Alert(hit.message)
             }
         } catch (error) {
-            alert('Server timeout!')
+            Alert('Server timeout!')
         }
     }
 

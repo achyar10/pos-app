@@ -1,4 +1,13 @@
 import axios from 'axios'
+import Swal from 'sweetalert2'
+
+const Warning = (msg) => {
+    Swal.fire({
+        title: 'Perhatian',
+        text: msg,
+        animation: false
+    })
+}
 
 export const numberFormat = (x) => {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -14,7 +23,7 @@ export const fetchGet = async (url) => {
         return hit.data
     } catch (error) {
         console.log(error)
-        alert('server timeout!')
+        Warning('server timeout!')
     }
 }
 
@@ -24,7 +33,7 @@ export const fetchPost = async (url, body) => {
         return hit.data
     } catch (error) {
         console.log(error)
-        alert('server timeout!')
+        Warning('server timeout!')
     }
 }
 
@@ -34,7 +43,7 @@ export const fetchPut = async (url, body) => {
         return hit.data
     } catch (error) {
         console.log(error)
-        alert('server timeout!')
+        Warning('server timeout!')
     }
 }
 
@@ -44,7 +53,7 @@ export const fetchDelete = async (url, body) => {
         return hit.data
     } catch (error) {
         console.log(error)
-        alert('server timeout!')
+        Warning('server timeout!')
     }
 }
 
@@ -55,12 +64,20 @@ export const printing = async (transactionId) => {
         }
         const hit = await axios.post(`${process.env.REACT_APP_API_POS}/print/struk`, { transactionId }, config)
         if (hit.data.status) {
-            alert(hit.data.result)
+            Warning(hit.data.result)
         } else {
-            alert(hit.data.message)
+            Warning(hit.data.message)
         }
     } catch (error) {
         console.log(error)
-        alert('Server time out!')
+        Warning('Server time out!')
     }
+}
+
+export const Alert = (msg) => {
+    Swal.fire({
+        title: 'Perhatian',
+        text: msg,
+        animation: false
+    })
 }

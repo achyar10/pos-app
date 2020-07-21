@@ -47,14 +47,12 @@ const Home = (props) => {
     }
 
     const handleLogout = () => {
-        if (window.confirm('Apakah anda akan menahan transaksi ini?')) {
-            dispatch({ type: 'CLERK', payload: false })
-            dispatch({ type: 'HOLD', payload: false })
-            dispatch({ type: 'TRANS', payload: [] })
-            dispatch({ type: 'MEMBER', payload: null })
-            localStorage.removeItem('authJwt')
-            props.history.push('/login')
-        }
+        dispatch({ type: 'CLERK', payload: false })
+        dispatch({ type: 'HOLD', payload: false })
+        dispatch({ type: 'TRANS', payload: [] })
+        dispatch({ type: 'MEMBER', payload: null })
+        localStorage.removeItem('authJwt')
+        props.history.push('/login')
     }
 
     return (

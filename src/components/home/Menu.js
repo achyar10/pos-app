@@ -5,7 +5,7 @@ import product from '../../assets/img/product.png'
 import open from '../../assets/img/open.png'
 import clerek from '../../assets/img/clerek.png'
 import ecommerce from '../../assets/img/ecommerce.png'
-import { numberFormat, reduce, printing, fetchPost, fetchPut } from '../../helpers'
+import { numberFormat, reduce, printing, fetchPost, fetchPut, Alert } from '../../helpers'
 import { Modal, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import { transUrl, smartMemberUrl } from '../../Endpoint'
@@ -66,7 +66,7 @@ const Menu = (props) => {
                 setMoney(result)
             }
         } else {
-            alert('Data belanjaan anda masih kosong!')
+            Alert('Data belanjaan anda masih kosong!')
         }
     }
 
@@ -156,13 +156,13 @@ const Menu = (props) => {
                     }
                     const res = await fetchPut(smartMemberUrl, body)
                     if (!res.status) {
-                        return alert(res.message)
+                        return Alert(res.message)
                     }
                 }
             }
             hit(snap)
         } catch (error) {
-            alert('Server timeout!')
+            Alert('Server timeout!')
         }
     }
 
@@ -175,10 +175,10 @@ const Menu = (props) => {
                 setTransId(id)
                 printing(id)
             } else {
-                alert(hit.message)
+                Alert(hit.message)
             }
         } catch (error) {
-            alert('Server timeout!')
+            Alert('Server timeout!')
         }
     }
 
