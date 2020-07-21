@@ -9,7 +9,6 @@ import { numberFormat, reduce, printing, fetchPost, fetchPut } from '../../helpe
 import { Modal, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import { transUrl, smartMemberUrl } from '../../Endpoint'
-import { Redirect } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 
 const Menu = (props) => {
@@ -206,7 +205,7 @@ const Menu = (props) => {
     const handleFinish = () => {
         setShow(false)
         setPay('CASH')
-        setCash(0)
+        setCash('')
         setCashback(0)
         setSedekah(0)
         setDebit()
@@ -221,7 +220,6 @@ const Menu = (props) => {
         dispatch({ type: 'HOLD', payload: false })
         dispatch({ type: 'TRANS', payload: [] })
         dispatch({ type: 'MEMBER', payload: null })
-        return (<Redirect to="/" />)
     }
 
     function right(str, chr) {
