@@ -1,7 +1,7 @@
 import React from 'react'
 import ScannerDetector from 'js-scanner-detection'
-import { numberFormat, reduce, fetchPost, Alert } from '../../helpers'
-import { scanUrl, holdUrl } from '../../Endpoint'
+import { numberFormat, reduce, fetchPost, Alert, Info } from '../../helpers'
+import { scanUrl, holdUrl, scanMemberUrl } from '../../Endpoint'
 import { useSelector, useDispatch } from 'react-redux'
 import './home.css'
 
@@ -12,33 +12,75 @@ const Pay = () => {
     const dispatch = useDispatch()
 
     const scanner = async barcode => {
-        const hit = await fetchPost(scanUrl, { barcode })
-        if (hit.status) {
-            const item = hit.data
-            const index = trans.findIndex(e => e.productId === item.productId)
-            if (index === -1) {
+        if (barcode.substr(0, 3) === '212') {
+            const findMember = await fetchPost(scanMemberUrl, { phone: barcode })
+            if (findMember.status) {
+                const data = findMember.data
                 dispatch({
-                    type: 'TRANS', payload: [...trans, {
-                        productId: item.productId,
-                        barcode: item.barcode,
-                        desc: item.desc,
-                        hpp: item.hpp,
-                        sales: item.sales,
-                        qty: 1,
-                        valueDisc: item.disc,
-                        disc: item.disc,
-                        sub_total: item.sales - item.disc
-                    }]
+                    type: 'MEMBER', payload: {
+                        memberId: data.id,
+                        member_no: data.phone,
+                        member_fullname: data.name,
+                        member_saldo: data.saldo,
+                        member_disc: 0,
+                        member_kind: data.kind
+                    }
                 })
+                const html = /*html*/`<table>
+                <tr>
+                    <td>Nama Member</td>
+                    <td>:</td>
+                    <td>${data.name}</td>
+                </tr>
+                <tr>
+                    <td>No Member</td>
+                    <td>:</td>
+                    <td>${data.phone}</td>
+                </tr>
+                <tr>
+                    <td>Saldo</td>
+                    <td>:</td>
+                    <td>Rp. ${numberFormat(data.saldo)}</td>
+                </tr>
+                <tr>
+                    <td>Point</td>
+                    <td>:</td>
+                    <td>${numberFormat(data.point)}</td>
+                </tr>
+                </table>`
+                Info(html)
             } else {
-                let copyData = [...trans]
-                copyData[index].qty += 1
-                copyData[index].disc = copyData[index].valueDisc * copyData[index].qty
-                copyData[index].sub_total = (copyData[index].sales * copyData[index].qty) - copyData[index].disc
-                dispatch({ type: 'TRANS', payload: copyData })
+                Alert(findMember.message)
             }
         } else {
-            Alert('Data produk tidak ditemukan!')
+            const hit = await fetchPost(scanUrl, { barcode })
+            if (hit.status) {
+                const item = hit.data
+                const index = trans.findIndex(e => e.productId === item.productId)
+                if (index === -1) {
+                    dispatch({
+                        type: 'TRANS', payload: [...trans, {
+                            productId: item.productId,
+                            barcode: item.barcode,
+                            desc: item.desc,
+                            hpp: item.hpp,
+                            sales: item.sales,
+                            qty: 1,
+                            valueDisc: item.disc,
+                            disc: item.disc,
+                            sub_total: item.sales - item.disc
+                        }]
+                    })
+                } else {
+                    let copyData = [...trans]
+                    copyData[index].qty += 1
+                    copyData[index].disc = copyData[index].valueDisc * copyData[index].qty
+                    copyData[index].sub_total = (copyData[index].sales * copyData[index].qty) - copyData[index].disc
+                    dispatch({ type: 'TRANS', payload: copyData })
+                }
+            } else {
+                Alert('Data produk tidak ditemukan!')
+            }
         }
     }
 

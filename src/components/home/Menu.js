@@ -154,9 +154,11 @@ const Menu = (props) => {
                         memberId: member.memberId,
                         amount: grand_total
                     }
-                    const res = await fetchPut(smartMemberUrl, body)
-                    if (!res.status) {
-                        return Alert(res.message)
+                    if (snap.payment_method === 'PARTIAL' || snap.payment_method === 'MEMBER') {
+                        const res = await fetchPut(smartMemberUrl, body)
+                        if (!res.status) {
+                            return Alert(res.message)
+                        }
                     }
                 }
             }
@@ -165,6 +167,8 @@ const Menu = (props) => {
             Alert('Server timeout!')
         }
     }
+
+
 
     const hit = async (body) => {
         try {

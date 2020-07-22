@@ -15,8 +15,8 @@ const Login = (props) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        if (nik === '') return Alert('Nik cannot be empty')
-        if (password === '') return Alert('Password cannot be empty')
+        if (nik === '') return Alert('NIK tidak boleh kosong')
+        if (password === '') return Alert('Password tidak boleh kosong')
         const response = await fetchPost(login, { nik, password })
         if (response.status) {
             localStorage.setItem('authJwt', response.data.token)

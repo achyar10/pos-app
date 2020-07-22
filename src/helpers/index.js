@@ -81,3 +81,11 @@ export const Alert = (msg) => {
         animation: false
     })
 }
+
+export const Info = (html) => {
+    Swal.fire({
+        title: 'Informasi',
+        animation: false,
+        html: html
+    })
+}
