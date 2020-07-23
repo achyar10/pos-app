@@ -12,7 +12,7 @@ const Pay = () => {
     const dispatch = useDispatch()
 
     const scanner = async barcode => {
-        if (barcode.substr(0, 3) === '212') {
+        if (barcode.substr(1, 2) === '22') {
             const findMember = await fetchPost(scanMemberUrl, { phone: barcode })
             if (findMember.status) {
                 const data = findMember.data

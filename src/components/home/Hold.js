@@ -25,8 +25,8 @@ const Hold = (props) => {
     const handleHold = async (obj) => {
         try {
             obj.items.forEach(el => {
-                el.sub_total = (el.sales * el.qty) - (el.disc * el.qty)
-                el.valueDisc = el.disc * el.qty
+                el.sub_total = (el.sales * el.qty) - el.disc
+                el.valueDisc = el.disc / el.qty
             })
             dispatch({ type: 'TRANS', payload: obj.items })
             if (obj.memberId) {
