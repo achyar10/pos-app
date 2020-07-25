@@ -8,7 +8,7 @@ import ecommerce from '../../assets/img/ecommerce.png'
 import { numberFormat, reduce, printing, fetchPost, fetchPut, Alert } from '../../helpers'
 import { Modal, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
-import { transUrl, smartMemberUrl } from '../../Endpoint'
+import { transUrl, smartMemberUrl, scanVoucherUrl, payVoucherUrl } from '../../Endpoint'
 import { useDispatch } from 'react-redux'
 
 const Menu = (props) => {
@@ -21,13 +21,13 @@ const Menu = (props) => {
     const [sedekah, setSedekah] = useState(0)
     const [debit, setDebit] = useState()
     const [code, setCode] = useState('')
-    const handleClose = () => setShow(false)
-    const handleShow = () => setShow(true)
     const [bank, setBank] = useState()
     const [disable, setDisable] = useState(true)
     const [finish, setFinish] = useState(false)
     const [transId, setTransId] = useState(null)
     const [partials, setPartial] = useState([])
+    const [voucher, setVoucher] = useState('')
+    const [voucherRp, setVoucherRp] = useState(0)
     const [money, setMoney] = useState([])
     const trans = useSelector(state => state.trans)
     const member = useSelector(state => state.member)
@@ -37,6 +37,13 @@ const Menu = (props) => {
     useEffect(() => {
 
     }, [pay, transId, partials])
+
+    const handleClose = () => {
+        setPay('CASH')
+        setShow(false)
+        setVoucherRp(0)
+    }
+    const handleShow = () => setShow(true)
 
     const handlePay = () => {
         if (data.sub_total > 0) {
@@ -136,7 +143,7 @@ const Menu = (props) => {
                 member_fullname: (member) ? member.member_fullname : null,
                 member_kind: (member) ? member.member_kind : null,
                 payment_method: (partials.length > 0) ? 'PARTIAL' : pay,
-                cash: (pay === 'CASH') ? cash : 0,
+                cash: (pay === 'CASH' || pay === 'VOUCHER') ? cash : 0,
                 sedekah, bank, ccno: debit, code,
                 items: details, partials
             }
@@ -161,6 +168,11 @@ const Menu = (props) => {
                         }
                     }
                 }
+            }
+            if (snap.payment_method === 'VOUCHER') {
+                fetchPut(payVoucherUrl, { voucher_no: voucher })
+                    .then(() => console.log('Vouhcer OK'))
+                    .catch(() => console.log('Voucher error'))
             }
             hit(snap)
         } catch (error) {
@@ -204,6 +216,26 @@ const Menu = (props) => {
         setDisable(false)
         const btnRemain = document.getElementById('btnRemain')
         btnRemain.style.display = 'none'
+    }
+
+    const handleVoucher = async () => {
+        try {
+            const hit = await fetchPost(scanVoucherUrl, { voucher_no: voucher })
+            if (hit.status) {
+                setVoucherRp(hit.data.amount)
+                if (hit.data.amount >= data.sub_total) {
+                    setDisable(false)
+                    setCash(hit.data.amount)
+                }
+                Alert('Voucher valid')
+            } else {
+                setVoucherRp(0)
+                setDisable(true)
+                Alert(hit.message)
+            }
+        } catch (error) {
+            Alert('Server timeout!')
+        }
     }
 
     const handleFinish = () => {
@@ -277,7 +309,7 @@ const Menu = (props) => {
                 </div>
                 <button className="btn btn-danger btn-lg btn-bayar shadow" onClick={handlePay}>BAYAR</button>
             </div>
-            <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
+            <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} animation={false}>
                 <Modal.Header>
                     <Modal.Title>Total Bayar Rp. {numberFormat(data.sub_total)}</Modal.Title>
                 </Modal.Header>
@@ -359,9 +391,17 @@ const Menu = (props) => {
                                         <p>Bukan Member Smart</p>
                                     </div>)
                                 }
-                            case 'PARTIAL':
+                            case 'VOUCHER':
                                 return (<div>
-                                    <p>Belum Tersedia</p>
+                                    <div className="form-group">
+                                        <label>Nomor Voucher <span className="text-danger">*</span></label>
+                                        <input type="number" className="form-control" placeholder="Masukan nomor voucher" onChange={e => setVoucher(e.target.value)} />
+                                    </div>
+                                    {(voucherRp > 0) ? <div className="form-group">
+                                        <label>Nominal Voucher</label>
+                                        <input type="text" className="form-control" readOnly value={numberFormat(voucherRp)} />
+                                    </div> : null}
+                                    <button className="btn btn-danger" onClick={handleVoucher}>Cek</button>
                                 </div>)
                             default:
                                 return (<div className="form-group">

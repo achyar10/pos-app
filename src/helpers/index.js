@@ -5,7 +5,13 @@ const Warning = (msg) => {
     Swal.fire({
         title: 'Perhatian',
         text: msg,
-        animation: false
+        showClass: {
+            popup: '',
+            icon: ''
+        },
+        hideClass: {
+            popup: '',
+        },
     })
 }
 
@@ -78,14 +84,26 @@ export const Alert = (msg) => {
     Swal.fire({
         title: 'Perhatian',
         text: msg,
-        animation: false
+        showClass: {
+            popup: '',
+            icon: ''
+        },
+        hideClass: {
+            popup: '',
+        },
     })
 }
 
 export const Info = (html) => {
     Swal.fire({
         title: 'Informasi',
-        animation: false,
-        html: html
+        html: html,
+        showClass: {
+            popup: '',
+            icon: ''
+        },
+        hideClass: {
+            popup: '',
+        },
     })
 }

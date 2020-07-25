@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { fetchPost, Alert } from '../../helpers'
-import { login, checkEod } from '../../Endpoint'
+import { login, checkEod, promotionUrl } from '../../Endpoint'
 import Logo from '../../assets/img/logo.png'
 import './login.css'
 
@@ -22,6 +22,9 @@ const Login = (props) => {
             localStorage.setItem('authJwt', response.data.token)
             const resEod = await fetchPost(checkEod, {})
             if (resEod.status) {
+                fetchPost(promotionUrl, {})
+                    .then(() => console.log('Promo has updated'))
+                    .catch(err => console.log(err))
                 props.history.push('/')
             } else {
                 localStorage.removeItem('authJwt')
