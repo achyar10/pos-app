@@ -59,7 +59,7 @@ const struk = (data = {}) => {
             for (let i = 0; i < data.items.length; i++) {
                 let item_name = data.items[i].desc.substring(0, 15)
                 let item_qty = data.items[i].qty.toString()
-                let item_sub_total = number((data.items[i].sales * data.items[i].qty) + data.items[i].disc)
+                let item_sub_total = number(data.items[i].sales * data.items[i].qty)
                 let qty_length = item_name.length + item_qty.length
                 let disc = `(${number(data.items[i].disc)})`
 

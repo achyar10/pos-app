@@ -5,6 +5,7 @@ const path = require("path");
 const isDev = require("electron-is-dev");
 const express = require("express")
 const bodyParser = require("body-parser")
+const cors = require("cors")
 const routes = require("./routes")
 
 let mainWindow;
@@ -21,6 +22,7 @@ function createWindow() {
 }
 
 // Server Thermal Printer
+server.use(cors())
 server.use(bodyParser.json({ limit: '50mb' }))
 server.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 server.use('/', routes)

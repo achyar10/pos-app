@@ -16,6 +16,7 @@
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.0",
+    "cors": "^2.8.5",
     "cross-env": "^7.0.2",
     "electron-is-dev": "^1.2.0",
     "escpos": "^3.0.0-alpha.6",
@@ -48,7 +49,7 @@
     "build-react": "react-scripts build",
     "test-react": "react-scripts test --env=jsdom",
     "eject-react": "react-scripts eject",
-    "build-electron": "electron-builder -m",
+    "build-electron": "electron-builder -w",
     "build": "npm run build-react && npm run build-electron",
     "start": "concurrently \"cross-env BROWSER=none npm run start-react\" \"wait-on http://localhost:3000 && electron .\""
   },
@@ -71,6 +72,7 @@
     "concurrently": "^5.2.0",
     "electron": "^10.1.5",
     "electron-builder": "^22.7.0",
+    "electron-rebuild": "^2.3.2",
     "wait-on": "^5.1.0"
   }
 }
