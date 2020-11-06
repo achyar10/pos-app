@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import { clerks } from '../../Endpoint'
-import { numberFormat, fetchPost, fetchGet, Alert } from '../../helpers'
+import { numberFormat, fetchPost, fetchGet, Alert, printingClerk } from '../../helpers'
 import { useSelector, useDispatch } from 'react-redux'
 import { withRouter  } from 'react-router-dom'
 
@@ -48,6 +48,7 @@ const Clerk = (props) => {
         setButtonName('Proses...')
         const res = await fetchPost(clerks, body)
         if (res.status) {
+            printingClerk(res.data)
             dispatch({ type: 'CLERK', payload: false })
             dispatch({ type: 'HOLD', payload: false })
             dispatch({ type: 'TRANS', payload: [] })

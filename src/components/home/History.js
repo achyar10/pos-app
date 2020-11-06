@@ -85,7 +85,6 @@ const History = (props) => {
                                     <th>Diskon</th>
                                     <th>Grand Total</th>
                                     <th>Retur</th>
-                                    <th>Transfer</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -98,7 +97,6 @@ const History = (props) => {
                                         <td>{numberFormat(el.total_discount)}</td>
                                         <td>{numberFormat(el.grand_total + el.total_discount)}</td>
                                         <td>{(el.retur) ? 'Ya' : 'Tidak'}</td>
-                                        <td>{(el.transfer) ? 'Ya' : 'Tidak'}</td>
                                         <td>
                                             <button className="btn btn-success btn-sm" onClick={() => printing(el.id)}>Reprint</button>
                                             {(!el.retur) ? <button className="btn btn-danger btn-sm ml-1" onClick={() => showModal(el.id)}>Retur</button> : ''}

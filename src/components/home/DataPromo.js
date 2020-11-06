@@ -9,8 +9,7 @@ const DataPromo = ({ promotion, loading }) => {
     const columns = [
         { dataField: "barcode", text: "Barcode" },
         { dataField: "desc", text: "Nama Produk" },
-        { dataField: "sales", text: "Harga Awal" },
-        { dataField: "promo", text: "Harga Promo" },
+        { dataField: "promo", text: "Potongan Harga" },
         { dataField: "period", text: "Periode" },
     ]
 

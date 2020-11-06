@@ -61,8 +61,8 @@ const Pay = () => {
                     dispatch({
                         type: 'TRANS', payload: [...trans, {
                             productId: item.productId,
-                            barcode: item.barcode,
-                            desc: item.desc,
+                            barcode: item.product.barcode,
+                            desc: item.product.desc,
                             hpp: item.hpp,
                             sales: item.sales,
                             qty: 1,

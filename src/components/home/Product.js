@@ -3,15 +3,14 @@ import { Modal, Button } from 'react-bootstrap'
 import { numberFormat, fetchPost, Alert } from '../../helpers'
 import Promotion from './Promotion'
 import { useSelector, useDispatch } from 'react-redux'
-import { scanUrl, itemUpdateUrl, itemUrl } from '../../Endpoint'
+import { scanUrl, itemUrl } from '../../Endpoint'
+import { debounce } from 'lodash'
 
 const Product = (props) => {
 
     const [product, setProduct] = useState([])
     const [search, setSearch] = useState('')
-    const [disable, setDisable] = useState(false)
     const [fetch, setFetch] = useState(false)
-    const [buttonName, setButtonName] = useState('Update Produk')
     const trans = useSelector(state => state.trans)
     const dispatch = useDispatch()
     const [show, setShow] = useState(false)
@@ -28,15 +27,14 @@ const Product = (props) => {
 
     }, [search])
 
-    const handleProduct = (e) => {
-        setSearch(e.target.value)
-        getProduct()
-    }
+    const handleProduct = debounce((val) => {
+        getProduct(val)
+    }, 1000)
 
-    const getProduct = async () => {
+    const getProduct = async (val) => {
         try {
-            const q = search
-            const hit = await fetchPost(itemUrl, { q })
+            setSearch(val)
+            const hit = await fetchPost(itemUrl, { q: val })
             if (hit.status) {
                 setProduct(hit.data)
             } else {
@@ -57,8 +55,8 @@ const Product = (props) => {
                     dispatch({
                         type: 'TRANS', payload: [...trans, {
                             productId: item.productId,
-                            barcode: item.barcode,
-                            desc: item.desc,
+                            barcode: item.product.barcode,
+                            desc: item.product.desc,
                             hpp: item.hpp,
                             sales: item.sales,
                             qty: 1,
@@ -82,28 +80,11 @@ const Product = (props) => {
         }
     }
 
-    const handleUpdate = async () => {
-        try {
-            setButtonName('Proses Update...')
-            setDisable(true)
-            const token = localStorage.getItem('authJwt')
-            const res = await fetchPost(itemUpdateUrl, { token })
-            if (res.status) {
-                setButtonName('Update Produk')
-                setDisable(false)
-                Alert('Update produk selesai')
-            }
-        } catch (error) {
-            Alert('Server timeout!')
-        }
-    }
-
     return (
         <>
             <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg' animation={false}>
                 <Modal.Header closeButton>
                     <Modal.Title>Semua Produk
-                        <Button variant="danger" className="btn-sm ml-2" onClick={handleUpdate} disabled={disable}>{buttonName}</Button>
                         <Button variant="warning" className="btn-sm ml-2 text-white" onClick={handleShow}>{'Promo'}</Button>
                     </Modal.Title>
                 </Modal.Header>
@@ -113,7 +94,7 @@ const Product = (props) => {
                             <button className="btn btn-info" type="button"><span
                                 className="fa fa-search"></span></button>
                         </div>
-                        <input type="text" className="form-control" placeholder="Ketik nama produk..." onChange={e => handleProduct(e)} />
+                        <input type="text" className="form-control" placeholder="Ketik nama produk..." onChange={e => handleProduct(e.target.value)} />
                     </div>
                     <div className="table-responsive">
                         <table className="table table-sm table-hover table-striped">
@@ -128,10 +109,10 @@ const Product = (props) => {
                             <tbody>
                                 {product.map((el, i) =>
                                     <tr key={i}>
-                                        <td>{el.barcode}</td>
-                                        <td>{el.desc}</td>
+                                        <td>{el.product.barcode}</td>
+                                        <td>{el.product.desc}</td>
                                         <td>{numberFormat(el.sales)}</td>
-                                        <td><button className="btn btn-sm btn-primary" onClick={() => props.close(scanner(el.barcode))}>Pilih</button></td>
+                                        <td><button className="btn btn-sm btn-primary" onClick={() => props.close(scanner(el.product.barcode))}>Pilih</button></td>
                                     </tr>
                                 )}
                             </tbody>

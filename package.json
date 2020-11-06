@@ -1,6 +1,6 @@
 {
   "name": "dahanta-pos",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "POS App React JS",
   "author": "Achyar Anshorie",
   "build": {
@@ -14,9 +14,13 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
     "bootstrap": "^4.5.0",
     "cross-env": "^7.0.2",
     "electron-is-dev": "^1.2.0",
+    "escpos": "^3.0.0-alpha.6",
+    "escpos-usb": "^3.0.0-alpha.4",
+    "express": "^4.17.1",
     "font-awesome": "^4.7.0",
     "immutability-helper": "^3.1.1",
     "js-scanner-detection": "^1.0.3",
@@ -36,14 +40,15 @@
     "react-scripts": "3.4.1",
     "react-table": "^7.2.1",
     "redux": "^4.0.5",
-    "sweetalert2": "^9.17.0"
+    "sweetalert2": "^9.17.0",
+    "usb": "^1.6.3"
   },
   "scripts": {
     "start-react": "react-scripts start",
     "build-react": "react-scripts build",
     "test-react": "react-scripts test --env=jsdom",
     "eject-react": "react-scripts eject",
-    "build-electron": "electron-builder -w",
+    "build-electron": "electron-builder -m",
     "build": "npm run build-react && npm run build-electron",
     "start": "concurrently \"cross-env BROWSER=none npm run start-react\" \"wait-on http://localhost:3000 && electron .\""
   },
@@ -64,7 +69,7 @@
   },
   "devDependencies": {
     "concurrently": "^5.2.0",
-    "electron": "^9.1.0",
+    "electron": "^10.1.5",
     "electron-builder": "^22.7.0",
     "wait-on": "^5.1.0"
   }

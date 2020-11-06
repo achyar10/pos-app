@@ -1,5 +1,6 @@
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import { printStruk, printClerk } from '../Endpoint'
 
 const Warning = (msg) => {
     Swal.fire({
@@ -68,7 +69,24 @@ export const printing = async (transactionId) => {
         const config = {
             headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
         }
-        const hit = await axios.post(`${process.env.REACT_APP_API_POS}/print/struk`, { transactionId }, config)
+        const hit = await axios.post(printStruk, { transactionId }, config)
+        if (hit.data.status) {
+            Warning(hit.data.result)
+        } else {
+            Warning(hit.data.message)
+        }
+    } catch (error) {
+        console.log(error)
+        Warning('Server time out!')
+    }
+}
+
+export const printingClerk = async (data) => {
+    try {
+        const config = {
+            headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
+        }
+        const hit = await axios.post(printClerk, { data }, config)
         if (hit.data.status) {
             Warning(hit.data.result)
         } else {
