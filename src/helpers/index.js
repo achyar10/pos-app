@@ -81,12 +81,12 @@ export const printing = async (transactionId) => {
     }
 }
 
-export const printingClerk = async (data) => {
+export const printingClerk = async (clerkId) => {
     try {
         const config = {
             headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
         }
-        const hit = await axios.post(printClerk, { data }, config)
+        const hit = await axios.post(printClerk, { clerkId }, config)
         if (hit.data.status) {
             Warning(hit.data.result)
         } else {

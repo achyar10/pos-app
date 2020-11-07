@@ -22,11 +22,23 @@ const printing = async (req, res) => {
 }
 
 const printingClerk = async (req, res) => {
+    const { clerkId } = req.body
     try {
-        const { data } = req.body
-        const print = printClerk(res.locals, data)
-        if (!print) return res.json({ status: false, message: 'Printer tidak terhubung!' })
-        return res.json({ status: true, result: 'Cetak Berhasil' })
+        const hit = await post('clerk/pos/view', { id: clerkId })
+        if (hit.status) {
+            const data = hit.data
+            const profile = {
+                name: data.user.name,
+                store_name: data.store.store_name,
+                store_phone: data.store.store_phone,
+                store_address: data.store.store_address,
+            }
+            const print = printClerk(profile, data)
+            if (!print) return res.json({ status: false, message: 'Printer tidak terhubung!' })
+            return res.json({ status: true, result: 'Cetak Berhasil' })
+        } else {
+            return res.json({ status: false, message: 'Data tidak ditemukan!' })
+        }
     } catch (error) {
         console.log(error)
         res.json({ status: false, result: 'Error Proses' })

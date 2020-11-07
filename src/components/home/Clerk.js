@@ -4,6 +4,7 @@ import { clerks } from '../../Endpoint'
 import { numberFormat, fetchPost, fetchGet, Alert, printingClerk } from '../../helpers'
 import { useSelector, useDispatch } from 'react-redux'
 import { withRouter  } from 'react-router-dom'
+import ClerkHistory from './ClerkHistory'
 
 const Clerk = (props) => {
 
@@ -23,10 +24,21 @@ const Clerk = (props) => {
     const [buttonName, setButtonName] = useState('Proses Clerk')
     const dispatch = useDispatch()
     const clerk = useSelector(state => state.clerk)
+    const [show, setShow] = useState(false)
+    const [fetch, setFetch] = useState(false)
 
     useEffect(() => {
 
     }, [])
+
+    const handleClose = () => {
+        setShow(false)
+        setFetch(false)
+    }
+    const handleShow = () => {
+        setShow(true)
+        setFetch(true)
+    }
 
     const getClerk = async () => {
         const hit = await fetchGet(clerks)
@@ -48,7 +60,7 @@ const Clerk = (props) => {
         setButtonName('Proses...')
         const res = await fetchPost(clerks, body)
         if (res.status) {
-            printingClerk(res.data)
+            printingClerk(res.data.id)
             dispatch({ type: 'CLERK', payload: false })
             dispatch({ type: 'HOLD', payload: false })
             dispatch({ type: 'TRANS', payload: [] })
@@ -77,7 +89,9 @@ const Clerk = (props) => {
         <>
             <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg' animation={false}>
                 <Modal.Header>
-                    <Modal.Title>Sales per shift</Modal.Title>
+                    <Modal.Title>Sales per shift
+                    </Modal.Title>
+                    <Button variant="info" className="btn-sm ml-2 text-white float-right" onClick={handleShow}>{'Histori Clerk'}</Button>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="table-responsive">
@@ -148,6 +162,7 @@ const Clerk = (props) => {
                     <Button variant="danger" className="ml-2" disabled={disable} onClick={() => handleClerk()}>{buttonName}</Button>
                 </Modal.Footer>
             </Modal>
+            <ClerkHistory show={show} onHide={handleClose} close={handleClose} fetch={fetch} />
         </>
     )
 
