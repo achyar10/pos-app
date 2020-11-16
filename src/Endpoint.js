@@ -19,6 +19,8 @@ export const payVoucherUrl = API + '/voucher'
 export const itemUrl = API + '/item/pos/list'
 export const holdUrl = API + '/hold/pos'
 export const promotionUrl = API + '/promotion/pos'
+export const qrisSnap = API + '/qris/snap'
+export const qrisWaiting = API + '/qris/waiting'
 
 export const printStruk = POS + '/print/struk'
 export const printClerk = POS + '/print/clerk'

@@ -11,6 +11,24 @@ const routes = require("./routes")
 let mainWindow;
 const server = express()
 function createWindow() {
+
+    // Server Thermal Printer
+    server.use(cors())
+    server.use(bodyParser.json({ limit: '50mb' }))
+    server.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
+    server.use('/', routes)
+    server.get('/', (req, res) => {
+        res.send('Welcome server thermal printer')
+    })
+    server.use((req, res, next) => {
+        res.status(404).send('<h2 align=center>Page not found!</h2>')
+    })
+    const PORT = 7001
+    server.listen(PORT, () => {
+        console.log(`server printer running on port ${PORT}`)
+    })
+
+    // Close Server Thermal
     
     mainWindow = new BrowserWindow();
     mainWindow.loadURL(
@@ -20,24 +38,6 @@ function createWindow() {
     );
     mainWindow.on("closed", () => (mainWindow = null));
 }
-
-// Server Thermal Printer
-server.use(cors())
-server.use(bodyParser.json({ limit: '50mb' }))
-server.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
-server.use('/', routes)
-server.get('/', (req, res) => {
-    res.send('Welcome server thermal printer')
-})
-server.use((req, res, next) => {
-    res.status(404).send('<h2 align=center>Page not found!</h2>')
-})
-const PORT = 7001
-server.listen(PORT, () => {
-    console.log(`server printer running on port ${PORT}`)
-})
-
-// Close Server Thermal
 
 app.on("ready", createWindow);
 app.on("window-all-closed", () => {

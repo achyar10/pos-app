@@ -4,12 +4,13 @@ import history from '../../assets/img/history.png'
 import product from '../../assets/img/product.png'
 import open from '../../assets/img/open.png'
 import clerek from '../../assets/img/clerek.png'
-import ecommerce from '../../assets/img/ecommerce.png'
+import setting from '../../assets/img/setting.png'
 import { numberFormat, reduce, printing, fetchPost, fetchPut, Alert } from '../../helpers'
 import { Modal, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
-import { transUrl, smartMemberUrl, scanVoucherUrl, payVoucherUrl } from '../../Endpoint'
+import { transUrl, smartMemberUrl, scanVoucherUrl, payVoucherUrl, qrisSnap, qrisWaiting } from '../../Endpoint'
 import { useDispatch } from 'react-redux'
+import QRCode from 'react-qr-code'
 
 const Menu = (props) => {
 
@@ -23,12 +24,17 @@ const Menu = (props) => {
     const [code, setCode] = useState('')
     const [bank, setBank] = useState()
     const [disable, setDisable] = useState(true)
+    const [generate, setGenerate] = useState(false)
+    const [labelGenerate, setLabelGenerate] = useState('Generate QR')
     const [finish, setFinish] = useState(false)
     const [transId, setTransId] = useState(null)
     const [partials, setPartial] = useState([])
     const [voucher, setVoucher] = useState('')
     const [voucherRp, setVoucherRp] = useState(0)
+    const [qrisId, setQrisId] = useState(null)
+    const [qrCode, setQrCode] = useState('')
     const [money, setMoney] = useState([])
+    const [intervalId, setIntervalId] = useState(null)
     const trans = useSelector(state => state.trans)
     const member = useSelector(state => state.member)
     const data = reduce(trans)
@@ -36,12 +42,15 @@ const Menu = (props) => {
 
     useEffect(() => {
 
-    }, [pay, transId, partials])
+    }, [pay, transId, partials, intervalId])
 
     const handleClose = () => {
         setPay('CASH')
         setShow(false)
         setVoucherRp(0)
+        setQrisId(null)
+        setQrCode('')
+        clearInterval(intervalId)
     }
     const handleShow = () => setShow(true)
 
@@ -123,7 +132,7 @@ const Menu = (props) => {
         setCashback(total)
     }
 
-    const bayar = async () => {
+    const bayar = async (idQris = null) => {
         try {
             let details = []
             trans.forEach(el => {
@@ -145,7 +154,8 @@ const Menu = (props) => {
                 payment_method: (partials.length > 0) ? 'PARTIAL' : pay,
                 cash: (pay === 'CASH' || pay === 'VOUCHER') ? cash : 0,
                 sedekah, bank, ccno: debit, code,
-                items: details, partials
+                items: details, partials, 
+                qrisId: idQris
             }
             if (member) {
                 if (member.member_kind === 'smart') {
@@ -179,8 +189,6 @@ const Menu = (props) => {
             Alert('Server timeout!')
         }
     }
-
-
 
     const hit = async (body) => {
         try {
@@ -238,6 +246,38 @@ const Menu = (props) => {
         }
     }
 
+    const handleQris = async () => {
+        try {
+            setGenerate(true)
+            setLabelGenerate('Mohon tunggu...')
+            const hit = await fetchPost(qrisSnap, { amount: data.sub_total })
+            if (hit.status) {
+                setGenerate(false)
+                setLabelGenerate('Generate QR')
+                setQrisId(hit.data.id)
+                setQrCode(hit.data.qr_string)
+                waitingQrisPaid(hit.data.id)
+            } else {
+                setDisable(true)
+                Alert(hit.message)
+            }
+        } catch (error) {
+            Alert('Server timeout!')
+        }
+    }
+
+    const waitingQrisPaid = (id) => {
+        const interval = setInterval(async () => {
+            setIntervalId(interval)
+            const res = await fetchPost(qrisWaiting, { id })
+            if (res.status) {
+                await bayar(id)
+                document.getElementById('qris').remove()
+                clearInterval(interval);
+            }
+        }, 5000)
+    }
+
     const handleFinish = () => {
         setShow(false)
         setPay('CASH')
@@ -251,6 +291,9 @@ const Menu = (props) => {
         setFinish(false)
         setTransId(null)
         setPartial([])
+        setMoney([])
+        setQrisId(null)
+        setQrCode('')
         setMoney([])
         dispatch({ type: 'CLERK', payload: false })
         dispatch({ type: 'HOLD', payload: false })
@@ -283,7 +326,7 @@ const Menu = (props) => {
                     <div className="col-md-6">
                         <div className="card button-box text-center shadow p-3 mb-5 bg-white" onClick={props.product}>
                             <img src={product} alt="" height="70" className="mx-auto d-block" />
-                            PRODUK
+                            PRODUCT
                         </div>
                     </div>
                     <div className="col-md-6 left">
@@ -301,9 +344,9 @@ const Menu = (props) => {
                         </div>
                     </div>
                     <div className="col-md-6 left">
-                        <div className="card button-box text-center shadow p-3 mb-5 bg-white">
-                            <img src={ecommerce} alt="" height="70" className="mx-auto d-block" />
-                            PPOB
+                        <div className="card button-box text-center shadow p-3 mb-5 bg-white" onClick={props.setting}>
+                            <img src={setting} alt="" height="70" className="mx-auto d-block" />
+                            SETTING
                         </div>
                     </div>
                 </div>
@@ -319,6 +362,7 @@ const Menu = (props) => {
                             <option value="CASH">Tunai</option>
                             <option value="DEBIT/CREDIT">Debit/Kredit</option>
                             {(member) ? ((member.member_kind === 'smart') ? <option value="MEMBER">Kartu Smart</option> : null) : null}
+                            <option value="QRIS">E-Wallet (LinkAja/Gopay/OVO/Dana/ShopeePay/BCA/Mandiri Pay/CIMB)</option>
                             <option value="VOUCHER">Voucher</option>
                             {/* <option value="PARTIAL">Parsial</option> */}
                         </select>
@@ -402,6 +446,13 @@ const Menu = (props) => {
                                         <input type="text" className="form-control" readOnly value={numberFormat(voucherRp)} />
                                     </div> : null}
                                     <button className="btn btn-danger" onClick={handleVoucher}>Cek</button>
+                                </div>)
+                            case 'QRIS':
+                                return (<div id="qris">
+                                    <button className="btn btn-danger" onClick={handleQris} disabled={generate}>{labelGenerate}</button><br /><br />
+                                    <div className="text-center">
+                                        {(qrisId) ? <QRCode value={qrCode} /> : null}
+                                    </div>
                                 </div>)
                             default:
                                 return (<div className="form-group">

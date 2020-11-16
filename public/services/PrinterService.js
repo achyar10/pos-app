@@ -3,13 +3,14 @@ const escpos = require('escpos')
 const Axios = require("axios")
 escpos.USB = require('escpos-usb')
 moment.locale('id')
+require('dotenv').config()
 
 const printing = async (req, res) => {
     try {
-        const { transactionId } = req.body
+        const { transactionId, paper = 'small' } = req.body
         const hit = await post('trans/pos/view', { transId: transactionId })
         if (hit.status) {
-            const print = struk(hit.data)
+            const print = struk(hit.data, paper)
             if (!print) return res.json({ status: false, message: 'Printer tidak terhubung!' })
             return res.json({ status: true, result: 'Cetak Berhasil', data: hit.data })
         } else {
@@ -45,7 +46,7 @@ const printingClerk = async (req, res) => {
     }
 }
 
-const struk = (data = {}) => {
+const struk = (data = {}, paper = 'small') => {
     try {
         const options = { encoding: "GB18030" /* default */ }
         const device = new escpos.USB();
@@ -55,6 +56,13 @@ const struk = (data = {}) => {
             let line = '--------------------------------'
             let width = separator.length - 12;
             let width2 = width - 9;
+            if (paper == 'large') {
+                separator = '================================================'
+                line = '------------------------------------------------'
+                width = separator.length - 12;
+                width2 = width - 25;
+            }
+            const min = 1
             printer
                 .align('CT')
                 .text('')
@@ -69,13 +77,13 @@ const struk = (data = {}) => {
                 .text(separator)
             let total_qty = 0
             for (let i = 0; i < data.items.length; i++) {
-                let item_name = data.items[i].desc.substring(0, 15)
+                let item_name = (paper == 'small') ? data.items[i].desc.substring(0, 15) : data.items[i].desc.substring(0, 30)
                 let item_qty = data.items[i].qty.toString()
                 let item_sub_total = number(data.items[i].sales * data.items[i].qty)
                 let qty_length = item_name.length + item_qty.length
                 let disc = `(${number(data.items[i].disc)})`
 
-                printer.text(`${item_name}${getSpace(width, qty_length)}${item_qty}  ${getSpace(width2 - 1, item_sub_total.length)}${item_sub_total}`)
+                printer.text(`${item_name}${getSpace(width, qty_length)}${item_qty}  ${getSpace(width2 - min, item_sub_total.length)}${item_sub_total}`)
                 if (data.items[i].disc > 0) {
                     printer.text(displayTwo('    Diskon', disc, separator))
                 }
@@ -89,7 +97,7 @@ const struk = (data = {}) => {
             let total_qty_length = total_item.length + total_qty.toString().length
             let sub_total = data.grand_total + data.total_discount
             let string_sub_total = number(sub_total)
-            printer.text(`${total_item}${getSpace(width, total_qty_length)}${total_qty}  ${getSpace(width2 - 1, string_sub_total.toString().length)}${string_sub_total}`)
+            printer.text(`${total_item}${getSpace(width, total_qty_length)}${total_qty}  ${getSpace(width2 - min, string_sub_total.toString().length)}${string_sub_total}`)
 
             printer.text(displayTwo('Total Diskon', number(data.total_discount), separator))
             printer.text(displayTwo('Total Belanja', number(data.grand_total), separator))
@@ -106,10 +114,14 @@ const struk = (data = {}) => {
                 }
             } else if (data.payment_method == 'VOUCHER') {
                 printer.text(displayTwo('Voucher', number(data.cash), separator))
+            } else if (data.payment_method == 'QRIS') {
+                printer.text(displayTwo('QRIS', number(data.grand_total), separator))
             } else {
                 printer.text(displayTwo('Non Tunai', number(data.grand_total), separator))
-                printer.text(displayTwo('Bank', data.bank, separator))
-                printer.text(displayTwo('No Kartu', data.ccno, separator))
+                if (data.bank && data.ccno) {
+                    printer.text(displayTwo('Bank', data.bank, separator))
+                    printer.text(displayTwo('No Kartu', data.ccno, separator))
+                }
             }
             if (data.memberId) {
                 printer.text(displayTwo('No Member', data.member_no, separator))
@@ -184,7 +196,7 @@ const printClerk = async (profile = {}, data = {}) => {
 
 const post = (uri, body) => {
     return new Promise((resolve, reject) => {
-        const url = 'https://prod.dahanta.co.id'
+        const url = process.env.REACT_APP_API_URL
         Axios.post(`${url}/${uri}`, body, { headers: { 'User-Agent': 'POS-DAHANTA' } })
             .then((res) => {
                 resolve(res.data)

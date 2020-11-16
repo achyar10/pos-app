@@ -66,10 +66,11 @@ export const fetchDelete = async (url, body) => {
 
 export const printing = async (transactionId) => {
     try {
+        const paper = localStorage.getItem('paper') || 'small'
         const config = {
             headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
         }
-        const hit = await axios.post(printStruk, { transactionId }, config)
+        const hit = await axios.post(printStruk, { transactionId, paper }, config)
         if (hit.data.status) {
             Warning(hit.data.result)
         } else {
