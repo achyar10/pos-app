@@ -468,7 +468,7 @@ const Menu = (props) => {
                             <Button variant="secondary" onClick={handleClose}>
                                 Batal
                             </Button>
-                            <Button variant="success" className="ml-3" onClick={bayar} disabled={disable}>Proses</Button>
+                            <Button variant="success" className="ml-3" onClick={() => bayar()} disabled={disable}>Proses</Button>
                         </div>
                         :
                         <div>
