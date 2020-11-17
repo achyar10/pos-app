@@ -1,10 +1,16 @@
 {
   "name": "dahanta-pos",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "POS App React JS",
   "author": "Achyar Anshorie",
   "build": {
-    "appId": "pos.react"
+    "appId": "pos.react",
+    "mac": {
+      "icon": "public/icon.icns"
+    },
+    "win": {
+      "icon": "public/icon.ico"
+    }
   },
   "main": "public/electron.js",
   "homepage": "./",
@@ -51,7 +57,7 @@
     "build-react": "react-scripts build",
     "test-react": "react-scripts test --env=jsdom",
     "eject-react": "react-scripts eject",
-    "build-electron": "electron-builder -w",
+    "build-electron": "electron-builder -m",
     "build": "npm run build-react && npm run build-electron",
     "start": "concurrently \"cross-env BROWSER=none npm run start-react\" \"wait-on http://localhost:3000 && electron .\""
   },

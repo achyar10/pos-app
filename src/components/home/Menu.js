@@ -448,10 +448,11 @@ const Menu = (props) => {
                                     <button className="btn btn-danger" onClick={handleVoucher}>Cek</button>
                                 </div>)
                             case 'QRIS':
-                                return (<div id="qris">
+                                return (<div id="qris" className="text-center">
                                     <button className="btn btn-danger" onClick={handleQris} disabled={generate}>{labelGenerate}</button><br /><br />
-                                    <div className="text-center">
+                                    <div className="">
                                         {(qrisId) ? <QRCode value={qrCode} /> : null}
+                                        <p>Silakan Scan QRCode ini pada aplikasi E-Wallet anda!</p>
                                     </div>
                                 </div>)
                             default:

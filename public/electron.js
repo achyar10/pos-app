@@ -1,6 +1,4 @@
-const electron = require("electron");
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
+const { app, BrowserWindow, Menu} = require("electron");
 const path = require("path");
 const isDev = require("electron-is-dev");
 const express = require("express")
@@ -30,7 +28,11 @@ function createWindow() {
 
     // Close Server Thermal
     
-    mainWindow = new BrowserWindow();
+    mainWindow = new BrowserWindow({
+        title: "Dahanta POS"
+    })
+    mainWindow.maximize()
+    Menu.setApplicationMenu(false)
     mainWindow.loadURL(
         isDev
             ? "http://localhost:3000"
