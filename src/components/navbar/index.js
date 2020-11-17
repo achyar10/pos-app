@@ -10,7 +10,7 @@ const Navbar = (props) => {
 
     return (
         <nav className="navbar">
-            <a className="navbar-brand text-white" href="/"><img src={Logo} height="40" alt="" /> DAHANTA POS</a>
+            <div className="navbar-brand text-white"><img src={Logo} height="40" alt="" /> DAHANTA POS</div>
             <div style={{ position: 'absolute', right: 250 }}>
                 <img src={Person} height="40" alt="" />
                 <span className="ml-2 text-white font-weight-bold" style={{ position: 'absolute', bottom: 0 }}>{session.name}</span>

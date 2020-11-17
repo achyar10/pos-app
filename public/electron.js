@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu} = require("electron");
+const { app, BrowserWindow } = require("electron");
 const path = require("path");
 const isDev = require("electron-is-dev");
 const express = require("express")
@@ -32,7 +32,6 @@ function createWindow() {
         title: "Dahanta POS"
     })
     mainWindow.maximize()
-    Menu.setApplicationMenu(false)
     mainWindow.loadURL(
         isDev
             ? "http://localhost:3000"

@@ -18,7 +18,7 @@ const printing = async (req, res) => {
         }
     } catch (error) {
         console.log(error)
-        res.json({ status: false, result: 'Error Proses' })
+        res.json({ status: false, message: error })
     }
 }
 
@@ -42,7 +42,7 @@ const printingClerk = async (req, res) => {
         }
     } catch (error) {
         console.log(error)
-        res.json({ status: false, result: 'Error Proses' })
+        res.json({ status: false, message: error })
     }
 }
 
@@ -196,7 +196,7 @@ const printClerk = async (profile = {}, data = {}) => {
 
 const post = (uri, body) => {
     return new Promise((resolve, reject) => {
-        const url = process.env.REACT_APP_API_URL
+        const url = 'https://prod.dahanta.co.id'
         Axios.post(`${url}/${uri}`, body, { headers: { 'User-Agent': 'POS-DAHANTA' } })
             .then((res) => {
                 resolve(res.data)
