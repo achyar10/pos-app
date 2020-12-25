@@ -16,6 +16,9 @@ import Pulsa from './ppob/Pulsa'
 import PaketData from './ppob/PaketData'
 import Pasca from './ppob/Pasca'
 import Listrik from './ppob/Listrik'
+import Telkom from './ppob/Telkom'
+import Bpjs from './ppob/Bpjs'
+import Tv from './ppob/Tv'
 
 const PPOB = (props) => {
 
@@ -24,6 +27,9 @@ const PPOB = (props) => {
     const [showPaket, setPaket] = useState(false)
     const [showPasca, setPasca] = useState(false)
     const [showListrik, setListrik] = useState(false)
+    const [showTelkom, setTelkom] = useState(false)
+    const [showBpjs, setBpjs] = useState(false)
+    const [showTv, setTv] = useState(false)
 
     const handleShowPulsa = () => {
         setPulsa(true)
@@ -58,6 +64,33 @@ const PPOB = (props) => {
     }
     const handleCloseListrik = () => {
         setListrik(false)
+        setModal(false)
+    }
+
+    const handleShowTelkom = () => {
+        setTelkom(true)
+        setModal(true)
+    }
+    const handleCloseTelkom = () => {
+        setTelkom(false)
+        setModal(false)
+    }
+
+    const handleShowBpjs = () => {
+        setBpjs(true)
+        setModal(true)
+    }
+    const handleCloseBpjs = () => {
+        setBpjs(false)
+        setModal(false)
+    }
+
+    const handleShowTv = () => {
+        setTv(true)
+        setModal(true)
+    }
+    const handleCloseTv = () => {
+        setTv(false)
         setModal(false)
     }
 
@@ -102,7 +135,7 @@ const PPOB = (props) => {
                             </div>
                         </div>
                         <div className="col-md-2">
-                            <div className="card">
+                            <div className="card pointer" onClick={handleShowTelkom}>
                                 <div className="card-body text-center">
                                     <img src={telkom} height="60" width="60" alt="pulsa" className="mx-auto d-block" />
                                     <h6 className="mt-2">TELKOM</h6>
@@ -110,7 +143,7 @@ const PPOB = (props) => {
                             </div>
                         </div>
                         <div className="col-md-2">
-                            <div className="card">
+                            <div className="card pointer" onClick={handleShowBpjs}>
                                 <div className="card-body text-center">
                                     <img src={bpjs} height="60" width="60" alt="pulsa" className="mx-auto d-block" />
                                     <h6 className="mt-2">BPJS</h6>
@@ -120,10 +153,10 @@ const PPOB = (props) => {
                     </div>
                     <div className="row mt-3">
                         <div className="col-md-2">
-                            <div className="card">
+                            <div className="card pointer" onClick={handleShowTv}>
                                 <div className="card-body text-center">
                                     <img src={tv} height="60" width="60" alt="pulsa" className="mx-auto d-block" />
-                                    <h6 className="mt-2">TV Kabel</h6>
+                                    <h6 className="mt-2">TV KABEL</h6>
                                 </div>
                             </div>
                         </div>
@@ -177,6 +210,9 @@ const PPOB = (props) => {
             <PaketData show={showPaket} close={handleClosePaket} />
             <Pasca show={showPasca} close={handleClosePasca} />
             <Listrik show={showListrik} close={handleCloseListrik} />
+            <Telkom show={showTelkom} close={handleCloseTelkom} />
+            <Bpjs show={showBpjs} close={handleCloseBpjs} />
+            <Tv show={showTv} close={handleCloseTv} />
         </div>
     )
 }

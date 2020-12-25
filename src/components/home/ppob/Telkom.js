@@ -5,12 +5,11 @@ import { postpaidInquiry, postpaidTrans } from '../../../Endpoint'
 import '../home.css'
 
 
-const Pasca = (props) => {
+const Telkom = (props) => {
 
     const [modal, setModal] = useState(false)
     const [disabled, setDisabled] = useState(false)
     const [hp, setHp] = useState('')
-    const [operator, setOperator] = useState('')
     const [pay, setPay] = useState(0)
     const [cash, setCash] = useState(0)
     const [obj, setObj] = useState(null)
@@ -39,7 +38,7 @@ const Pasca = (props) => {
             }
             const hit = await fetchPost(postpaidTrans, body)
             if (hit.status) {
-                Alert('Pembayaran Pascabayar Berhasil')
+                Alert('Pembayaran Telkom Berhasil')
                 handleClose()
                 setObj(null)
             } else {
@@ -54,7 +53,7 @@ const Pasca = (props) => {
     const inquiry = async () => {
         try {
             setDisabled(true)
-            const hit = await fetchPost(postpaidInquiry, { code: operator, hp: hp })
+            const hit = await fetchPost(postpaidInquiry, { code: 'TELKOMPSTN', hp: hp })
             if (hit.status) {
                 setObj(hit.data)
             } else {
@@ -72,23 +71,12 @@ const Pasca = (props) => {
         <div>
             <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='md' animation={false} className={modal && 'hide'}>
                 <Modal.Header closeButton>
-                    Telepon Pascabayar
+                    Telkom / Indihome
                 </Modal.Header>
                 <Modal.Body>
                     <div className="form-group">
-                        <label>Operator</label>
-                        <select className="form-control" onChange={(e) => setOperator(e.target.value)}>
-                            <option value="">--- Pilih Operator ---</option>
-                            <option value="HPTSEL">Telkomsel - Halo</option>
-                            <option value="HPXL">XL Prioritas</option>
-                            <option value="HPMTRIXB">Indosat - Matrix</option>
-                            <option value="HPTHREE">Tri Pascabayar</option>
-                            <option value="HPSMART">Smartfren Pascabayar</option>
-                        </select>
-                    </div>
-                    <div className="form-group">
-                        <label>Nomor Handphone</label>
-                        <input type="text" className="form-control" placeholder="Masukan nomor handphone..." onChange={(e) => setHp(e.target.value)} />
+                        <label>Nomor Telkom/Indihome</label>
+                        <input type="text" className="form-control" placeholder="Masukan nomor Telepon / Indihome..." onChange={(e) => setHp(e.target.value)} />
                     </div>
                     <button className="btn btn-danger" disabled={disabled} onClick={inquiry}>Cek Tagihan</button>
                     <hr />
@@ -97,6 +85,10 @@ const Pasca = (props) => {
                             <tr>
                                 <td>Nama Pelanggan</td>
                                 <td className="font-weight-bold">{obj.tr_name}</td>
+                            </tr>
+                            <tr>
+                                <td>Periode Tagihan</td>
+                                <td className="font-weight-bold">{obj.period}</td>
                             </tr>
                             <tr>
                                 <td>Nominal Tagihan</td>
@@ -145,4 +137,4 @@ const Pasca = (props) => {
     )
 }
 
-export default Pasca
+export default Telkom

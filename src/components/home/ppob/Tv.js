@@ -5,7 +5,7 @@ import { postpaidInquiry, postpaidTrans } from '../../../Endpoint'
 import '../home.css'
 
 
-const Pasca = (props) => {
+const Tv = (props) => {
 
     const [modal, setModal] = useState(false)
     const [disabled, setDisabled] = useState(false)
@@ -39,7 +39,7 @@ const Pasca = (props) => {
             }
             const hit = await fetchPost(postpaidTrans, body)
             if (hit.status) {
-                Alert('Pembayaran Pascabayar Berhasil')
+                Alert('Pembayaran Internet/TV Kabel Berhasil')
                 handleClose()
                 setObj(null)
             } else {
@@ -67,23 +67,32 @@ const Pasca = (props) => {
         }
     }
 
+    const data = [
+        { code: 'TVBIG', name: 'BIG TV' },
+        { code: 'TVDENS', name: 'DENS TV' },
+        { code: 'TVFIRST', name: 'FIRSTMEDIA' },
+        { code: 'TVINDVS', name: 'INDOVISION' },
+        { code: 'TVNEX', name: 'NEX MEDIA' },
+        { code: 'TVTLKMV', name: 'TELKOM VISION' },
+        { code: 'CBN', name: 'CBN INTERNET' },
+        { code: 'MYREPUBLIC', name: 'MY REPUBLIC' },
+        { code: 'NET1', name: 'NET1' },
+    ]
 
     return (
         <div>
             <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='md' animation={false} className={modal && 'hide'}>
                 <Modal.Header closeButton>
-                    Telepon Pascabayar
+                    Internet & TV Kabel
                 </Modal.Header>
                 <Modal.Body>
                     <div className="form-group">
-                        <label>Operator</label>
+                        <label>Layanan Internet / TV Kabel</label>
                         <select className="form-control" onChange={(e) => setOperator(e.target.value)}>
-                            <option value="">--- Pilih Operator ---</option>
-                            <option value="HPTSEL">Telkomsel - Halo</option>
-                            <option value="HPXL">XL Prioritas</option>
-                            <option value="HPMTRIXB">Indosat - Matrix</option>
-                            <option value="HPTHREE">Tri Pascabayar</option>
-                            <option value="HPSMART">Smartfren Pascabayar</option>
+                            <option value="">--- Pilih Layanan ---</option>
+                            {data.map((el, i) =>
+                                <option key={i} value={el.code}>{el.name}</option>
+                            )}
                         </select>
                     </div>
                     <div className="form-group">
@@ -145,4 +154,4 @@ const Pasca = (props) => {
     )
 }
 
-export default Pasca
+export default Tv

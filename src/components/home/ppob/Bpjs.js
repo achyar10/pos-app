@@ -5,12 +5,13 @@ import { postpaidInquiry, postpaidTrans } from '../../../Endpoint'
 import '../home.css'
 
 
-const Pasca = (props) => {
+const Bpjs = (props) => {
 
     const [modal, setModal] = useState(false)
     const [disabled, setDisabled] = useState(false)
     const [hp, setHp] = useState('')
     const [operator, setOperator] = useState('')
+    const [bulan, setBulan] = useState(1)
     const [pay, setPay] = useState(0)
     const [cash, setCash] = useState(0)
     const [obj, setObj] = useState(null)
@@ -39,7 +40,7 @@ const Pasca = (props) => {
             }
             const hit = await fetchPost(postpaidTrans, body)
             if (hit.status) {
-                Alert('Pembayaran Pascabayar Berhasil')
+                Alert('Pembayaran BPJS Berhasil')
                 handleClose()
                 setObj(null)
             } else {
@@ -54,7 +55,7 @@ const Pasca = (props) => {
     const inquiry = async () => {
         try {
             setDisabled(true)
-            const hit = await fetchPost(postpaidInquiry, { code: operator, hp: hp })
+            const hit = await fetchPost(postpaidInquiry, { code: operator, hp: hp, period: bulan, })
             if (hit.status) {
                 setObj(hit.data)
             } else {
@@ -72,23 +73,24 @@ const Pasca = (props) => {
         <div>
             <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='md' animation={false} className={modal && 'hide'}>
                 <Modal.Header closeButton>
-                    Telepon Pascabayar
+                    BPJS
                 </Modal.Header>
                 <Modal.Body>
                     <div className="form-group">
-                        <label>Operator</label>
+                        <label>Jenis BPJS</label>
                         <select className="form-control" onChange={(e) => setOperator(e.target.value)}>
-                            <option value="">--- Pilih Operator ---</option>
-                            <option value="HPTSEL">Telkomsel - Halo</option>
-                            <option value="HPXL">XL Prioritas</option>
-                            <option value="HPMTRIXB">Indosat - Matrix</option>
-                            <option value="HPTHREE">Tri Pascabayar</option>
-                            <option value="HPSMART">Smartfren Pascabayar</option>
+                            <option value="">--- Pilih Jenis ---</option>
+                            <option value="BPJS">BPJS Kesehatan</option>
+                            <option value="BPJSTK">BPJS Ketenagakerjaan</option>
                         </select>
                     </div>
                     <div className="form-group">
-                        <label>Nomor Handphone</label>
-                        <input type="text" className="form-control" placeholder="Masukan nomor handphone..." onChange={(e) => setHp(e.target.value)} />
+                        <label>Nomor BPJS</label>
+                        <input type="text" className="form-control" placeholder="Masukan nomor BPJS..." onChange={(e) => setHp(e.target.value)} />
+                    </div>
+                    <div className="form-group">
+                        <label>Jumlah Bulan</label>
+                        <input type="number" className="form-control" min="1" defaultValue="1" onChange={(e) => setBulan(e.target.value)} />
                     </div>
                     <button className="btn btn-danger" disabled={disabled} onClick={inquiry}>Cek Tagihan</button>
                     <hr />
@@ -96,19 +98,23 @@ const Pasca = (props) => {
                         <tbody>
                             <tr>
                                 <td>Nama Pelanggan</td>
-                                <td className="font-weight-bold">{obj.tr_name}</td>
+                                <td>:</td>
+                                <td>{obj.tr_name}</td>
                             </tr>
                             <tr>
                                 <td>Nominal Tagihan</td>
-                                <td className="font-weight-bold">Rp. {numberFormat(obj.nominal)}</td>
+                                <td>:</td>
+                                <td>Rp. {numberFormat(obj.nominal)}</td>
                             </tr>
                             <tr>
                                 <td>Biaya Admin</td>
-                                <td className="font-weight-bold">Rp. {numberFormat(obj.admin)}</td>
+                                <td>:</td>
+                                <td>Rp. {numberFormat(obj.admin)}</td>
                             </tr>
-                            <tr>
+                            <tr className="font-weight-bold">
                                 <td>Total Tagihan</td>
-                                <td className="font-weight-bold">Rp. {numberFormat(obj.price)}</td>
+                                <td>:</td>
+                                <td>Rp. {numberFormat(obj.price)}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -145,4 +151,4 @@ const Pasca = (props) => {
     )
 }
 
-export default Pasca
+export default Bpjs
