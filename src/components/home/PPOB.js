@@ -22,6 +22,7 @@ import Pdam from './ppob/Pdam'
 import Finance from './ppob/Finance'
 import Esamsat from './ppob/Esamsat'
 import Pbb from './ppob/Pbb'
+import Emoney from './ppob/Emoney'
 
 const PPOB = (props) => {
 
@@ -38,6 +39,7 @@ const PPOB = (props) => {
     const [showFinance, setFinance] = useState(false)
     const [showEsamsat, setEsamsat] = useState(false)
     const [showPbb, setPbb] = useState(false)
+    const [showEmoney, setEmoney] = useState(false)
 
     const handleShowPulsa = () => {
         setPulsa(true)
@@ -146,6 +148,17 @@ const PPOB = (props) => {
         setFetch(false)
     }
 
+    const handleShowEmoney = () => {
+        setFetch(true)
+        setEmoney(true)
+        setModal(true)
+    }
+    const handleCloseEmoney = () => {
+        setEmoney(false)
+        setModal(false)
+        setFetch(false)
+    }
+
     return (
         <div>
             <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='xl' animation={false} className={(modal) ? 'hide' : ''}>
@@ -229,10 +242,10 @@ const PPOB = (props) => {
                             </div>
                         </div>
                         <div className="col-md-2">
-                            <div className="card">
+                            <div className="card pointer" onClick={handleShowEmoney}>
                                 <div className="card-body text-center">
                                     <img src={emoney} height="60" width="60" alt="pulsa" className="mx-auto d-block" />
-                                    <h6 className="mt-2">E-MONEY</h6>
+                                    <h6 className="mt-2">E-WALLET</h6>
                                 </div>
                             </div>
                         </div>
@@ -267,6 +280,7 @@ const PPOB = (props) => {
             <Tv show={showTv} close={handleCloseTv} />
             <Pdam show={showPdam} close={handleClosePdam} fetching={fetch} />
             <Finance show={showFinance} close={handleCloseFinance} fetching={fetch} />
+            <Emoney show={showEmoney} close={handleCloseEmoney} />
             <Esamsat show={showEsamsat} close={handleCloseEsamsat} fetching={fetch} />
             <Pbb show={showPbb} close={handleClosePbb} fetching={fetch} />
         </div>
