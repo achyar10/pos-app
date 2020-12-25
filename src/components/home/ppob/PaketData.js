@@ -6,7 +6,7 @@ import { debounce } from 'lodash'
 import '../home.css'
 
 
-const Pulsa = (props) => {
+const PaketData = (props) => {
 
     const [modal, setModal] = useState(false)
     const [disabled, setDisabled] = useState(false)
@@ -46,7 +46,7 @@ const Pulsa = (props) => {
             }
             const hit = await fetchPost(prepaidTrans, body)
             if (hit.status) {
-                Alert('Pembelian Pulsa Prabayar Berhasil')
+                Alert('Pembelian Paket Data Berhasil')
                 handleClose()
             } else {
                 Alert(hit.message)
@@ -60,7 +60,7 @@ const Pulsa = (props) => {
     const getProduct = async (val) => {
         try {
             setHp(val)
-            const hit = await fetchPost(prepaidGet, { pulsa_type: 'pulsa', hp: val })
+            const hit = await fetchPost(prepaidGet, { pulsa_type: 'data', hp: val })
             if (hit.status) {
                 setProduct(hit.data)
             } else {
@@ -74,9 +74,9 @@ const Pulsa = (props) => {
 
     return (
         <div>
-            <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='md' animation={false} className={modal && 'hide'}>
+            <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='lg' animation={false} className={modal && 'hide'}>
                 <Modal.Header closeButton>
-                    Pulsa Prabayar
+                    Paket Data Internet
                 </Modal.Header>
                 <Modal.Body>
                     <div className="form-group">
@@ -138,4 +138,4 @@ const Pulsa = (props) => {
     )
 }
 
-export default Pulsa
+export default PaketData

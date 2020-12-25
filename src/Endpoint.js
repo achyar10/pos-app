@@ -23,7 +23,11 @@ export const qrisSnap = API + '/qris/snap'
 export const qrisWaiting = API + '/qris/waiting'
 
 export const prepaidGet = API + '/prepaid/pulsa'
+export const prepaidInquiry = API + '/prepaid/inquiry'
 export const prepaidTrans = API + '/prepaid/trans'
+export const postpaidInquiry = API + '/postpaid/inquiry'
+export const postpaidTrans = API + '/postpaid/trans'
+export const postpaidCheck = API + '/postpaid/check'
 
 export const printStruk = POS + '/print/struk'
 export const printClerk = POS + '/print/clerk'

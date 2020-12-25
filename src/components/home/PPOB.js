@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Modal, Button } from 'react-bootstrap'
+import { Alert } from '../../helpers'
 import pulsa from '../../assets/img/pulsa.png'
 import pln from '../../assets/img/pln.png'
 import telkom from '../../assets/img/telkom.png'
@@ -12,18 +13,51 @@ import esamsat from '../../assets/img/esamsat.png'
 import pbb from '../../assets/img/pbb.png'
 import './home.css'
 import Pulsa from './ppob/Pulsa'
+import PaketData from './ppob/PaketData'
+import Pasca from './ppob/Pasca'
+import Listrik from './ppob/Listrik'
 
 const PPOB = (props) => {
 
     const [modal, setModal] = useState(false)
     const [showPulsa, setPulsa] = useState(false)
-    
+    const [showPaket, setPaket] = useState(false)
+    const [showPasca, setPasca] = useState(false)
+    const [showListrik, setListrik] = useState(false)
+
     const handleShowPulsa = () => {
         setPulsa(true)
         setModal(true)
     }
     const handleClosePulsa = () => {
         setPulsa(false)
+        setModal(false)
+    }
+
+    const handleShowPaket = () => {
+        setPaket(true)
+        setModal(true)
+    }
+    const handleClosePaket = () => {
+        setPaket(false)
+        setModal(false)
+    }
+
+    const handleShowPasca = () => {
+        setPasca(true)
+        setModal(true)
+    }
+    const handleClosePasca = () => {
+        setPasca(false)
+        setModal(false)
+    }
+
+    const handleShowListrik = () => {
+        setListrik(true)
+        setModal(true)
+    }
+    const handleCloseListrik = () => {
+        setListrik(false)
         setModal(false)
     }
 
@@ -44,7 +78,7 @@ const PPOB = (props) => {
                             </div>
                         </div>
                         <div className="col-md-2">
-                            <div className="card">
+                            <div className="card pointer" onClick={handleShowPaket}>
                                 <div className="card-body text-center">
                                     <img src={pulsa} height="60" width="60" alt="pulsa" className="mx-auto d-block" />
                                     <h6 className="mt-2">PAKET DATA</h6>
@@ -52,7 +86,7 @@ const PPOB = (props) => {
                             </div>
                         </div>
                         <div className="col-md-2">
-                            <div className="card">
+                            <div className="card pointer" onClick={handleShowPasca}>
                                 <div className="card-body text-center">
                                     <img src={pulsa} height="60" width="60" alt="pulsa" className="mx-auto d-block" />
                                     <h6 className="mt-2">PASCABAYAR</h6>
@@ -60,7 +94,7 @@ const PPOB = (props) => {
                             </div>
                         </div>
                         <div className="col-md-2">
-                            <div className="card">
+                            <div className="card pointer" onClick={handleShowListrik}>
                                 <div className="card-body text-center">
                                     <img src={pln} height="60" width="60" alt="pulsa" className="mx-auto d-block" />
                                     <h6 className="mt-2">LISTRIK PLN</h6>
@@ -140,6 +174,9 @@ const PPOB = (props) => {
                 </Modal.Footer>
             </Modal>
             <Pulsa show={showPulsa} close={handleClosePulsa} />
+            <PaketData show={showPaket} close={handleClosePaket} />
+            <Pasca show={showPasca} close={handleClosePasca} />
+            <Listrik show={showListrik} close={handleCloseListrik} />
         </div>
     )
 }
