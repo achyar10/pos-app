@@ -44,3 +44,11 @@
 .over-flow{
     height:400px; overflow:auto;
 }
+
+.pointer {
+    cursor: pointer;
+}
+
+.hide {
+    display: none !important;
+}

@@ -4,7 +4,7 @@ import history from '../../assets/img/history.png'
 import product from '../../assets/img/product.png'
 import open from '../../assets/img/open.png'
 import clerek from '../../assets/img/clerek.png'
-import setting from '../../assets/img/setting.png'
+import ppob from '../../assets/img/ecommerce.png'
 import { numberFormat, reduce, printing, fetchPost, fetchPut, Alert } from '../../helpers'
 import { Modal, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
@@ -344,9 +344,9 @@ const Menu = (props) => {
                         </div>
                     </div>
                     <div className="col-md-6 left">
-                        <div className="card button-box text-center shadow p-3 mb-5 bg-white" onClick={props.setting}>
-                            <img src={setting} alt="" height="70" className="mx-auto d-block" />
-                            SETTING
+                        <div className="card button-box text-center shadow p-3 mb-5 bg-white" onClick={props.ppob}>
+                            <img src={ppob} alt="" height="70" className="mx-auto d-block" />
+                            PPOB
                         </div>
                     </div>
                 </div>

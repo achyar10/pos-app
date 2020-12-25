@@ -22,6 +22,9 @@ export const promotionUrl = API + '/promotion/pos'
 export const qrisSnap = API + '/qris/snap'
 export const qrisWaiting = API + '/qris/waiting'
 
+export const prepaidGet = API + '/prepaid/pulsa'
+export const prepaidTrans = API + '/prepaid/trans'
+
 export const printStruk = POS + '/print/struk'
 export const printClerk = POS + '/print/clerk'
 

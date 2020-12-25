@@ -12,6 +12,7 @@ const Navbar = (props) => {
         <nav className="navbar">
             <div className="navbar-brand text-white"><img src={Logo} height="40" alt="" /> DAHANTA POS</div>
             <div style={{ position: 'absolute', right: 250 }}>
+                <span className="fa fa-gear text-white icon-size" onClick={props.setting}></span>
                 <img src={Person} height="40" alt="" />
                 <span className="ml-2 text-white font-weight-bold" style={{ position: 'absolute', bottom: 0 }}>{session.name}</span>
             </div>
