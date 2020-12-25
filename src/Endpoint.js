@@ -28,6 +28,7 @@ export const prepaidTrans = API + '/prepaid/trans'
 export const postpaidInquiry = API + '/postpaid/inquiry'
 export const postpaidTrans = API + '/postpaid/trans'
 export const postpaidCheck = API + '/postpaid/check'
+export const postpaidByCode = API + '/postpaid/bycode'
 
 export const printStruk = POS + '/print/struk'
 export const printClerk = POS + '/print/clerk'

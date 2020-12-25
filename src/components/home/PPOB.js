@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Modal, Button } from 'react-bootstrap'
-import { Alert } from '../../helpers'
 import pulsa from '../../assets/img/pulsa.png'
 import pln from '../../assets/img/pln.png'
 import telkom from '../../assets/img/telkom.png'
@@ -19,10 +18,15 @@ import Listrik from './ppob/Listrik'
 import Telkom from './ppob/Telkom'
 import Bpjs from './ppob/Bpjs'
 import Tv from './ppob/Tv'
+import Pdam from './ppob/Pdam'
+import Finance from './ppob/Finance'
+import Esamsat from './ppob/Esamsat'
+import Pbb from './ppob/Pbb'
 
 const PPOB = (props) => {
 
     const [modal, setModal] = useState(false)
+    const [fetch, setFetch] = useState(false)
     const [showPulsa, setPulsa] = useState(false)
     const [showPaket, setPaket] = useState(false)
     const [showPasca, setPasca] = useState(false)
@@ -30,6 +34,10 @@ const PPOB = (props) => {
     const [showTelkom, setTelkom] = useState(false)
     const [showBpjs, setBpjs] = useState(false)
     const [showTv, setTv] = useState(false)
+    const [showPdam, setPdam] = useState(false)
+    const [showFinance, setFinance] = useState(false)
+    const [showEsamsat, setEsamsat] = useState(false)
+    const [showPbb, setPbb] = useState(false)
 
     const handleShowPulsa = () => {
         setPulsa(true)
@@ -92,6 +100,50 @@ const PPOB = (props) => {
     const handleCloseTv = () => {
         setTv(false)
         setModal(false)
+    }
+
+    const handleShowPdam = () => {
+        setFetch(true)
+        setPdam(true)
+        setModal(true)
+    }
+    const handleClosePdam = () => {
+        setPdam(false)
+        setModal(false)
+        setFetch(false)
+    }
+
+    const handleShowFinance = () => {
+        setFetch(true)
+        setFinance(true)
+        setModal(true)
+    }
+    const handleCloseFinance = () => {
+        setFinance(false)
+        setModal(false)
+        setFetch(false)
+    }
+
+    const handleShowEsamsat = () => {
+        setFetch(true)
+        setEsamsat(true)
+        setModal(true)
+    }
+    const handleCloseEsamsat = () => {
+        setEsamsat(false)
+        setModal(false)
+        setFetch(false)
+    }
+
+    const handleShowPbb = () => {
+        setFetch(true)
+        setPbb(true)
+        setModal(true)
+    }
+    const handleClosePbb = () => {
+        setPbb(false)
+        setModal(false)
+        setFetch(false)
     }
 
     return (
@@ -161,15 +213,15 @@ const PPOB = (props) => {
                             </div>
                         </div>
                         <div className="col-md-2">
-                            <div className="card">
+                            <div className="card pointer" onClick={handleShowPdam}>
                                 <div className="card-body text-center">
                                     <img src={pdam} height="60" width="60" alt="pulsa" className="mx-auto d-block" />
-                                    <h6 className="mt-2">PDAM</h6>
+                                    <h6 className="mt-2">AIR PDAM</h6>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-2">
-                            <div className="card">
+                            <div className="card pointer" onClick={handleShowFinance}>
                                 <div className="card-body text-center">
                                     <img src={cicilan} height="60" width="60" alt="pulsa" className="mx-auto d-block" />
                                     <h6 className="mt-2">ANGSURAN</h6>
@@ -185,7 +237,7 @@ const PPOB = (props) => {
                             </div>
                         </div>
                         <div className="col-md-2">
-                            <div className="card">
+                            <div className="card pointer" onClick={handleShowEsamsat}>
                                 <div className="card-body text-center">
                                     <img src={esamsat} height="60" width="60" alt="pulsa" className="mx-auto d-block" />
                                     <h6 className="mt-2">E-SAMSAT</h6>
@@ -193,7 +245,7 @@ const PPOB = (props) => {
                             </div>
                         </div>
                         <div className="col-md-2">
-                            <div className="card">
+                            <div className="card pointer" onClick={handleShowPbb}>
                                 <div className="card-body text-center">
                                     <img src={pbb} height="60" alt="pulsa" className="mx-auto d-block" />
                                     <h6 className="mt-2">PBB</h6>
@@ -213,6 +265,10 @@ const PPOB = (props) => {
             <Telkom show={showTelkom} close={handleCloseTelkom} />
             <Bpjs show={showBpjs} close={handleCloseBpjs} />
             <Tv show={showTv} close={handleCloseTv} />
+            <Pdam show={showPdam} close={handleClosePdam} fetching={fetch} />
+            <Finance show={showFinance} close={handleCloseFinance} fetching={fetch} />
+            <Esamsat show={showEsamsat} close={handleCloseEsamsat} fetching={fetch} />
+            <Pbb show={showPbb} close={handleClosePbb} fetching={fetch} />
         </div>
     )
 }
