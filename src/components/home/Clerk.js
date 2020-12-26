@@ -15,9 +15,11 @@ const Clerk = (props) => {
         total_sedekah: 0,
         total_disc: 0,
         total_retur: 0,
+        total_ppob: 0,
         count_retur: 0,
         count_sales: 0,
-        count_qty: 0
+        count_qty: 0,
+        count_ppob: 0
     })
     const [selisih, setSelisih] = useState(0)
     const [disable, setDisable] = useState(false)
@@ -50,7 +52,7 @@ const Clerk = (props) => {
     }
 
     const handleClerk = async () => {
-        const grand_total = data.total_trans - data.total_retur + data.total_sedekah
+        const grand_total = data.total_trans - data.total_retur + data.total_sedekah + data.total_ppob
         let body = {
             ...data, ...{
                 grand_total, setoran: grand_total + selisih
@@ -81,7 +83,7 @@ const Clerk = (props) => {
 
     const handleSetor = (e) => {
         const setoran = parseInt(e.target.value) || 0
-        const grand_total = data.total_trans - data.total_retur + data.total_sedekah
+        const grand_total = data.total_trans - data.total_retur + data.total_sedekah + data.total_ppob
         setSelisih(setoran - grand_total)
     }
 
@@ -113,6 +115,11 @@ const Clerk = (props) => {
                                     <td>{numberFormat(data.count_retur)}</td>
                                 </tr>
                                 <tr>
+                                    <td>Jumlah Transaksi PPOB</td>
+                                    <td>:</td>
+                                    <td>{numberFormat(data.count_ppob)}</td>
+                                </tr>
+                                <tr>
                                     <td>Total Tunai</td>
                                     <td>:</td>
                                     <td>Rp. {numberFormat(data.total_cash)}</td>
@@ -138,9 +145,14 @@ const Clerk = (props) => {
                                     <td>Rp. {numberFormat(data.total_sedekah)}</td>
                                 </tr>
                                 <tr>
+                                    <td>Total Nominal PPOB</td>
+                                    <td>:</td>
+                                    <td>Rp. {numberFormat(data.total_ppob)}</td>
+                                </tr>
+                                <tr>
                                     <td className="font-weight-bold">Grand Total</td>
                                     <td className="font-weight-bold">:</td>
-                                    <td className="font-weight-bold">Rp. {numberFormat(data.total_trans - data.total_retur + data.total_sedekah)}</td>
+                                    <td className="font-weight-bold">Rp. {numberFormat(data.total_trans - data.total_retur + data.total_sedekah + data.total_ppob)}</td>
                                 </tr>
                                 <tr>
                                     <td>Input Setoran</td>
