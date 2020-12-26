@@ -23,6 +23,7 @@ import Finance from './ppob/Finance'
 import Esamsat from './ppob/Esamsat'
 import Pbb from './ppob/Pbb'
 import Emoney from './ppob/Emoney'
+import History from './ppob/History'
 
 const PPOB = (props) => {
 
@@ -40,6 +41,7 @@ const PPOB = (props) => {
     const [showEsamsat, setEsamsat] = useState(false)
     const [showPbb, setPbb] = useState(false)
     const [showEmoney, setEmoney] = useState(false)
+    const [showHistory, setHistory] = useState(false)
 
     const handleShowPulsa = () => {
         setPulsa(true)
@@ -159,11 +161,23 @@ const PPOB = (props) => {
         setFetch(false)
     }
 
+    const handleShowHistory = () => {
+        setFetch(true)
+        setHistory(true)
+        setModal(true)
+    }
+    const handleCloseHistory = () => {
+        setHistory(false)
+        setModal(false)
+        setFetch(false)
+    }
+
     return (
         <div>
             <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='xl' animation={false} className={(modal) ? 'hide' : ''}>
                 <Modal.Header>
-                    Menu PPOB
+                    <Modal.Title>Menu PPOB</Modal.Title>
+                    <Button variant="info" className="btn-sm ml-2 text-white float-right" onClick={handleShowHistory}>{'Histori Transaksi'}</Button>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="row">
@@ -283,6 +297,7 @@ const PPOB = (props) => {
             <Emoney show={showEmoney} close={handleCloseEmoney} />
             <Esamsat show={showEsamsat} close={handleCloseEsamsat} fetching={fetch} />
             <Pbb show={showPbb} close={handleClosePbb} fetching={fetch} />
+            <History show={showHistory} close={handleCloseHistory} fetching={fetch} />
         </div>
     )
 }

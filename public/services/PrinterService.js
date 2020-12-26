@@ -46,6 +46,129 @@ const printingClerk = async (req, res) => {
     }
 }
 
+const prepaid = (req, res) => {
+    const { data, paper } = req.body
+    try {
+        const options = { encoding: "GB18030" /* default */ }
+        const device = new escpos.USB();
+        const printer = new escpos.Printer(device, options);
+        device.open((error) => {
+            let separator = '================================'
+            let line = '--------------------------------'
+            if (paper == 'large') {
+                separator = '================================================'
+                line = '------------------------------------------------'
+            }
+            printer
+                .align('CT')
+                .text('')
+                .text(`${data.store.store_name.toUpperCase()} / ${data.store.store_phone}`)
+                .text('CV. DAHANTA BERKAH RETAILINDO')
+                .text('')
+                .text(data.store.store_address.toUpperCase())
+                .align('LT')
+                .text(separator)
+                .text(`Bon    : ${data.no_trans}`)
+                .text(`Kasir  : ${data.fullname}`)
+                .text(separator)
+
+            printer.text(displayTwo('ID Transaksi', data.tr_id, separator))
+            printer.text(displayTwo('Produk', data.operator, separator))
+            printer.text(displayTwo('Nomor', data.hp, separator))
+            if(data.type !== 'pln') {
+                printer.text(displayTwo('Serial Number', data.sn, separator))
+            } else {
+                const split = data.sn.split('/')
+                printer.text(displayTwo('Nama', split[1], separator))
+                printer.text(displayTwo('Tarif/Daya', `${split[2]}/${split[3]}`, separator))
+                printer.text(displayTwo('Kwh', split[4], separator))
+            }
+            printer.text(displayTwo('Harga', number(data.sales), separator))
+            printer.text(displayTwo('Tunai', number(data.cash), separator))
+            printer.text(displayTwo('Kembalian', number(data.cash - data.sales), separator))
+            if (data.type === 'pln') {
+                printer.text(line)
+                const split = data.sn.split('/')
+                printer.align('CT').text('TOKEN')
+                printer.align('CT').text(split[0])
+            }
+            printer.align('LT').text(separator)
+            printer.text(`Tgl. ${moment(data.createdAt).format('DD MMMM YYYY, HH:mm:ss')}`)
+            printer.text(line)
+            printer.text('Kritik & Saran: 0813-9806-6633')
+            printer.text('')
+            printer.cut().close()
+        })
+        return res.json({ status: true, result: 'Cetak Berhasil' })
+    } catch (error) {
+        console.log(error)
+        res.json({ status: false, message: 'Printer tidak terhubung!' })
+    }
+}
+
+const postpaid = (req, res) => {
+    const { data, obj, paper } = req.body
+    try {
+        const options = { encoding: "GB18030" /* default */ }
+        const device = new escpos.USB();
+        const printer = new escpos.Printer(device, options);
+        device.open((error) => {
+            let separator = '================================'
+            let line = '--------------------------------'
+            if (paper == 'large') {
+                separator = '================================================'
+                line = '------------------------------------------------'
+            }
+            printer
+                .align('CT')
+                .text('')
+                .text(`${obj.store.store_name.toUpperCase()} / ${obj.store.store_phone}`)
+                .text('CV. DAHANTA BERKAH RETAILINDO')
+                .text('')
+                .text(obj.store.store_address.toUpperCase())
+                .align('LT')
+                .text(separator)
+                .text(`Bon    : ${obj.no_trans}`)
+                .text(`Kasir  : ${obj.fullname}`)
+                .text(separator)
+
+            if (data.code === 'PLNPOSTPAID') {
+                printer.text(displayTwo('IDPEL', data.hp, separator))
+                printer.text(displayTwo('NAMA', data.tr_name, separator))
+                printer.text(displayTwo('TARIF/DAYA', `${data.desc.tarif}/${data.desc.daya}`, separator))
+                printer.text(displayTwo('BL/TH', moment(data.period, "YYYYMM").format('MMM YY'), separator))
+                printer.text(displayTwo('RP TAG PLN', number(data.nominal), separator))
+                printer.text(displayTwo('NO REF', data.noref, separator))
+                printer.align('CT').text('PLN menyatakan struk ini sebagai bukti pembayaran yang sah.')
+                printer.align('LT').text(displayTwo('ADMIN BANK', number(data.admin), separator))
+                printer.text(displayTwo('TOTAL BAYAR', number(data.price), separator))
+                printer.align('CT').text('Terima Kasih')
+                printer.align('CT').text('Informasi Hubungi Call Center 123 Atau Hub PLN Terdekat')
+            } else {
+                printer.text(displayTwo('Produk', data.code, separator))
+                printer.text(displayTwo('Nomor', data.hp, separator))
+                printer.text(displayTwo('Nama', data.tr_name, separator))
+                printer.text(displayTwo('No Ref', data.noref, separator))
+                printer.text(displayTwo('Total Tagihan', number(data.nominal), separator))
+                printer.text(displayTwo('Admin', number(data.admin), separator))
+                printer.text(displayTwo('Total Bayar', number(data.price), separator))
+            }
+            printer.align('LT').text(displayTwo('Tunai', number(obj.cash), separator))
+            printer.text(displayTwo('Kembalian', number(obj.cash - obj.sales), separator))
+            printer.text(separator)
+            printer.text(`Tgl. ${moment(obj.createdAt).format('DD MMMM YYYY, HH:mm:ss')}`)
+            printer.text(line)
+            printer.text('Kritik & Saran: 0813-9806-6633')
+            printer.text('')
+            printer.cut().close()
+        })
+        return res.json({ status: true, result: 'Cetak Berhasil' })
+    } catch (error) {
+        console.log(error)
+        res.json({ status: false, message: 'Printer tidak terhubung!' })
+    }
+}
+
 const struk = (data = {}, paper = 'small') => {
     try {
         const options = { encoding: "GB18030" /* default */ }
@@ -226,4 +349,4 @@ const number = (x) => {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-module.exports = { printing, printingClerk }
+module.exports = { printing, printingClerk, prepaid, postpaid }
