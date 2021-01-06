@@ -5,12 +5,13 @@ import product from '../../assets/img/product.png'
 import open from '../../assets/img/open.png'
 import clerek from '../../assets/img/clerek.png'
 import ppob from '../../assets/img/ecommerce.png'
-import { numberFormat, reduce, printing, fetchPost, fetchPut, Alert } from '../../helpers'
+import { numberFormat, reduce, printing, fetchPost, fetchPut, cleanSeparator, Alert } from '../../helpers'
 import { Modal, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import { transUrl, smartMemberUrl, scanVoucherUrl, payVoucherUrl, qrisSnap, qrisWaiting } from '../../Endpoint'
 import { useDispatch } from 'react-redux'
 import QRCode from 'react-qr-code'
+import NumberFormat from 'react-number-format';
 
 const Menu = (props) => {
 
@@ -114,7 +115,7 @@ const Menu = (props) => {
     }
 
     const cashBack = (e) => {
-        const tunai = e.target.value
+        const tunai = cleanSeparator(e.target.value)
         const total = tunai - data.sub_total
         setCash(tunai)
         setCashback(total)
@@ -126,7 +127,7 @@ const Menu = (props) => {
     }
 
     const donate = (e) => {
-        const sedekah = e.target.value
+        const sedekah = cleanSeparator(e.target.value)
         const total = cash - data.sub_total - sedekah
         setSedekah(sedekah)
         setCashback(total)
@@ -378,11 +379,11 @@ const Menu = (props) => {
                                         {money.map(el => (
                                             <Button key={el} variant="success" size="sm" className="ml-2 mt-1" onClick={() => handleCash(el)}>{numberFormat(el)}</Button>
                                         ))}
-                                        <input type="text" className="form-control mt-2" placeholder="atau input manual disini" onChange={e => cashBack(e)} value={cash} />
+                                        <NumberFormat className="form-control mt-2" placeholder="atau input manual disini" onChange={e => cashBack(e)} value={cash} thousandSeparator={true} />
                                     </div>
                                     <div className="form-group">
                                         <label>Sedekah</label>
-                                        <input type="text" className="form-control" placeholder="Masukan nominal sedekah" onChange={e => donate(e)} />
+                                        <NumberFormat className="form-control mt-2" placeholder="Masukan nominal sedekah" onChange={e => donate(e)} thousandSeparator={true} />
                                     </div>
                                     <div className="form-group">
                                         <label>Kembalian</label>

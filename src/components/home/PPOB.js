@@ -10,6 +10,7 @@ import emoney from '../../assets/img/emoney.png'
 import cicilan from '../../assets/img/cicilan.png'
 import esamsat from '../../assets/img/esamsat.png'
 import pbb from '../../assets/img/pbb.png'
+import smart from '../../assets/img/smart.png'
 import './home.css'
 import Pulsa from './ppob/Pulsa'
 import PaketData from './ppob/PaketData'
@@ -24,6 +25,7 @@ import Esamsat from './ppob/Esamsat'
 import Pbb from './ppob/Pbb'
 import Emoney from './ppob/Emoney'
 import History from './ppob/History'
+import Smart from './ppob/Smart'
 
 const PPOB = (props) => {
 
@@ -42,6 +44,7 @@ const PPOB = (props) => {
     const [showPbb, setPbb] = useState(false)
     const [showEmoney, setEmoney] = useState(false)
     const [showHistory, setHistory] = useState(false)
+    const [showSmart, setSmart] = useState(false)
 
     const handleShowPulsa = () => {
         setPulsa(true)
@@ -172,6 +175,16 @@ const PPOB = (props) => {
         setFetch(false)
     }
 
+    const handleShowSmart = () => {
+        setSmart(true)
+        setModal(true)
+    }
+
+    const handleCloseSmart = () => {
+        setSmart(false)
+        setModal(false)
+    }
+
     return (
         <div>
             <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='xl' animation={false} className={(modal) ? 'hide' : ''}>
@@ -280,6 +293,16 @@ const PPOB = (props) => {
                             </div>
                         </div>
                     </div>
+                    <div className="row mt-3">
+                        <div className="col-md-2">
+                            <div className="card pointer" onClick={handleShowSmart}>
+                                <div className="card-body text-center">
+                                    <img src={smart} height="60" alt="pulsa" className="mx-auto d-block" />
+                                    <h6 className="mt-2">TOPUP SMART</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={props.close}>Tutup</Button>
@@ -298,6 +321,7 @@ const PPOB = (props) => {
             <Esamsat show={showEsamsat} close={handleCloseEsamsat} fetching={fetch} />
             <Pbb show={showPbb} close={handleClosePbb} fetching={fetch} />
             <History show={showHistory} close={handleCloseHistory} fetching={fetch} />
+            <Smart show={showSmart} close={handleCloseSmart}/>
         </div>
     )
 }

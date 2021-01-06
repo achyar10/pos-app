@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Modal } from 'react-bootstrap'
-import { numberFormat, fetchPost, Alert } from '../../../helpers'
+import { numberFormat, fetchPost, cleanSeparator, Alert } from '../../../helpers'
 import { prepaidGet, prepaidTrans } from '../../../Endpoint'
+import NumberFormat from 'react-number-format';
 import { debounce } from 'lodash'
 import '../home.css'
 
@@ -127,7 +128,7 @@ const PaketData = (props) => {
                     </div>
                     <div className="form-group">
                         <label>Uang Tunai</label>
-                        <input type="number" className="form-control" placeholder="Masukan uang tunai" defaultValue="0" onChange={(e) => setCash(e.target.value)} />
+                        <NumberFormat className="form-control" onChange={e => setCash(cleanSeparator(e.target.value))} thousandSeparator={true} prefix={'Rp. '} />
                     </div>
                 </Modal.Body>
                 <Modal.Footer>

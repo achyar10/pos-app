@@ -21,6 +21,7 @@ export const holdUrl = API + '/hold/pos'
 export const promotionUrl = API + '/promotion/pos'
 export const qrisSnap = API + '/qris/snap'
 export const qrisWaiting = API + '/qris/waiting'
+export const topupUrl = API + '/dc/topup'
 
 
 export const prepaidGet = API + '/prepaid/pulsa'

@@ -1,45 +1,35 @@
 import React, { useState, useEffect } from 'react'
 import { Modal } from 'react-bootstrap'
 import { numberFormat, fetchPost, cleanSeparator, Alert } from '../../../helpers'
-import { postpaidInquiry, postpaidTrans } from '../../../Endpoint'
+import { topupUrl, scanMemberUrl } from '../../../Endpoint'
 import NumberFormat from 'react-number-format';
 import '../home.css'
 
 
-const Telkom = (props) => {
+const Smart = (props) => {
 
     const [modal, setModal] = useState(false)
     const [disabled, setDisabled] = useState(false)
-    const [hp, setHp] = useState('')
+    const [phone, setPhone] = useState('')
     const [pay, setPay] = useState(0)
-    const [cash, setCash] = useState(0)
     const [obj, setObj] = useState(null)
     const handleClose = () => setModal(false)
 
     useEffect(() => {
 
-    }, [hp])
+    }, [phone])
 
     const handleBuy = () => {
         setModal(true)
-        setPay(obj.price)
     }
 
     const handlePay = async () => {
         try {
             setDisabled(true)
-            const body = {
-                hp: hp,
-                code: obj.code,
-                ref_id: obj.ref_id,
-                tr_id: obj.tr_id,
-                hpp: obj.selling_price,
-                sales: obj.price,
-                cash: cash
-            }
-            const hit = await fetchPost(postpaidTrans, body)
+            const body = { phone, amount: pay }
+            const hit = await fetchPost(topupUrl, body)
             if (hit.status) {
-                Alert('Pembayaran Telkom Berhasil')
+                Alert('Topup Member Smart Berhasil')
                 handleClose()
                 setObj(null)
             } else {
@@ -54,7 +44,7 @@ const Telkom = (props) => {
     const inquiry = async () => {
         try {
             setDisabled(true)
-            const hit = await fetchPost(postpaidInquiry, { code: 'TELKOMPSTN', hp: hp })
+            const hit = await fetchPost(scanMemberUrl, { phone: phone })
             if (hit.status) {
                 setObj(hit.data)
             } else {
@@ -72,40 +62,32 @@ const Telkom = (props) => {
         <div>
             <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='md' animation={false} className={modal && 'hide'}>
                 <Modal.Header closeButton>
-                    Telkom / Indihome
+                    Topup Member Smart
                 </Modal.Header>
                 <Modal.Body>
                     <div className="form-group">
-                        <label>Nomor Telkom/Indihome</label>
-                        <input type="text" className="form-control" placeholder="Masukan nomor Telepon / Indihome..." onChange={(e) => setHp(e.target.value)} />
+                        <label>Nomor Member Smart</label>
+                        <input type="text" className="form-control" placeholder="Masukan nomor member..." onChange={(e) => setPhone(e.target.value)} />
                     </div>
-                    <button className="btn btn-danger" disabled={disabled} onClick={inquiry}>Cek Tagihan</button>
+                    <button className="btn btn-danger" disabled={disabled} onClick={inquiry}>Cek Member</button>
                     <hr />
                     {obj && <div><table className="table table-borderless table-sm table-hover">
                         <tbody>
                             <tr>
-                                <td>Nama Pelanggan</td>
-                                <td className="font-weight-bold">{obj.tr_name}</td>
+                                <td>Nama Member</td>
+                                <td className="font-weight-bold">{obj.name}</td>
                             </tr>
                             <tr>
-                                <td>Periode Tagihan</td>
-                                <td className="font-weight-bold">{obj.period}</td>
+                                <td>Saldo Saat ini</td>
+                                <td className="font-weight-bold">{numberFormat(obj.saldo)}</td>
                             </tr>
                             <tr>
-                                <td>Nominal Tagihan</td>
-                                <td className="font-weight-bold">Rp. {numberFormat(obj.nominal)}</td>
-                            </tr>
-                            <tr>
-                                <td>Biaya Admin</td>
-                                <td className="font-weight-bold">Rp. {numberFormat(obj.admin)}</td>
-                            </tr>
-                            <tr>
-                                <td>Total Tagihan</td>
-                                <td className="font-weight-bold">Rp. {numberFormat(obj.price)}</td>
+                                <td>Point</td>
+                                <td className="font-weight-bold">{numberFormat(obj.point)}</td>
                             </tr>
                         </tbody>
                     </table>
-                        <button className="btn btn-success btn-block" onClick={() => handleBuy()}>Bayar</button>
+                        <button className="btn btn-success btn-block" onClick={() => handleBuy()}>Topup</button>
                     </div>}
 
                 </Modal.Body>
@@ -122,12 +104,8 @@ const Telkom = (props) => {
                         <input type="text" className="form-control" defaultValue="Tunai" readOnly />
                     </div>
                     <div className="form-group">
-                        <label>Jumlah yang harus dibayarkan</label>
-                        <input type="text" className="form-control" value={numberFormat(pay)} readOnly />
-                    </div>
-                    <div className="form-group">
-                        <label>Uang Tunai</label>
-                        <NumberFormat className="form-control" onChange={e => setCash(cleanSeparator(e.target.value))} thousandSeparator={true} prefix={'Rp. '} />
+                        <label>Nominal Topup</label>
+                        <NumberFormat className="form-control" onChange={e => setPay(cleanSeparator(e.target.value))} thousandSeparator={true} prefix={'Rp. '} />
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
@@ -138,4 +116,4 @@ const Telkom = (props) => {
     )
 }
 
-export default Telkom
+export default Smart
