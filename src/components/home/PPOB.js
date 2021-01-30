@@ -11,6 +11,7 @@ import cicilan from '../../assets/img/cicilan.png'
 import esamsat from '../../assets/img/esamsat.png'
 import pbb from '../../assets/img/pbb.png'
 import smart from '../../assets/img/smart.png'
+import transfer from '../../assets/img/transfer.png'
 import './home.css'
 import Pulsa from './ppob/Pulsa'
 import PaketData from './ppob/PaketData'
@@ -26,6 +27,7 @@ import Pbb from './ppob/Pbb'
 import Emoney from './ppob/Emoney'
 import History from './ppob/History'
 import Smart from './ppob/Smart'
+import Transfer from './ppob/Transfer'
 
 const PPOB = (props) => {
 
@@ -45,6 +47,7 @@ const PPOB = (props) => {
     const [showEmoney, setEmoney] = useState(false)
     const [showHistory, setHistory] = useState(false)
     const [showSmart, setSmart] = useState(false)
+    const [showTransfer, setTransfer] = useState(false)
 
     const handleShowPulsa = () => {
         setPulsa(true)
@@ -185,6 +188,18 @@ const PPOB = (props) => {
         setModal(false)
     }
 
+    const handleShowTransfer = () => {
+        setFetch(true)
+        setTransfer(true)
+        setModal(true)
+    }
+
+    const handleCloseTransfer = () => {
+        setTransfer(false)
+        setModal(false)
+        setFetch(false)
+    }
+
     return (
         <div>
             <Modal show={props.show} onHide={props.close} backdrop="static" keyboard={false} size='xl' animation={false} className={(modal) ? 'hide' : ''}>
@@ -302,6 +317,14 @@ const PPOB = (props) => {
                                 </div>
                             </div>
                         </div>
+                        <div className="col-md-2">
+                            <div className="card pointer" onClick={handleShowTransfer}>
+                                <div className="card-body text-center">
+                                    <img src={transfer} height="60" alt="pulsa" className="mx-auto d-block" />
+                                    <h6 className="mt-2">TRANSFER</h6>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
@@ -322,6 +345,7 @@ const PPOB = (props) => {
             <Pbb show={showPbb} close={handleClosePbb} fetching={fetch} />
             <History show={showHistory} close={handleCloseHistory} fetching={fetch} />
             <Smart show={showSmart} close={handleCloseSmart}/>
+            <Transfer show={showTransfer} close={handleCloseTransfer} fetching={fetch}/>
         </div>
     )
 }

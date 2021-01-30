@@ -35,8 +35,15 @@ export const postpaidCheck = API + '/postpaid/check'
 export const postpaidByCode = API + '/postpaid/bycode'
 export const ppobHistory = API + '/ppob/history'
 
+export const bankList = API + '/bank/list'
+export const inquiryAccount = API + '/bank/inquiry'
+export const transferBank = API + '/bank/disbursement'
+export const transferStatus = API + '/bank/status'
+export const transferHistory = API + '/bank/transfer'
+
 export const printStruk = POS + '/print/struk'
 export const printClerk = POS + '/print/clerk'
 export const printPreStruk = POS + '/print/ppob/prepaid'
 export const printPostStruk = POS + '/print/ppob/postpaid'
+export const printBankStruk = POS + '/print/bank/transfer'
 

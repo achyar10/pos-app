@@ -75,7 +75,7 @@ const prepaid = (req, res) => {
             printer.text(displayTwo('ID Transaksi', data.tr_id, separator))
             printer.text(displayTwo('Produk', data.operator, separator))
             printer.text(displayTwo('Nomor', data.hp, separator))
-            if(data.type !== 'pln') {
+            if (data.type !== 'pln') {
                 printer.text(displayTwo('Serial Number', data.sn, separator))
             } else {
                 const split = data.sn.split('/')
@@ -319,6 +319,58 @@ const printClerk = async (profile = {}, data = {}) => {
     }
 }
 
+const transfer = (req, res) => {
+    const { data, paper } = req.body
+    try {
+        const options = { encoding: "GB18030" /* default */ }
+        const device = new escpos.USB();
+        const printer = new escpos.Printer(device, options);
+        device.open((error) => {
+            let separator = '================================'
+            let line = '--------------------------------'
+            if (paper == 'large') {
+                separator = '================================================'
+                line = '------------------------------------------------'
+            }
+            printer
+                .align('CT')
+                .text('')
+                .text(`${data.store.store_name.toUpperCase()} / ${data.store.store_phone}`)
+                .text('CV. DAHANTA BERKAH RETAILINDO')
+                .text('')
+                .text(data.store.store_address.toUpperCase())
+                .align('LT')
+                .text(separator)
+                .text(`Bon    : ${data.no_trans}`)
+                .text(`Kasir  : ${data.fullname}`)
+                .text(separator)
+
+            printer.text(displayTwo('Produk', 'BANK TRANSFER', separator))
+            printer.text(displayTwo('Kode Bank', data.bank_code, separator))
+            printer.text(displayTwo('Nama Bank', data.bank_name, separator))
+            printer.text(displayTwo('Nomor Rekening', data.account_number, separator))
+            printer.text(displayTwo('Nama', data.account_name, separator))
+            printer.text(displayTwo('Nominal Transfer', number(data.amount), separator))
+            printer.text(displayTwo('Admin', number(data.sales - data.amount), separator))
+            printer.text(displayTwo('Total Bayar', number(data.sales), separator))
+            printer.text(displayTwo('Keterangan', data.note, separator))
+
+            printer.text(displayTwo('Tunai', number(data.cash), separator))
+            printer.text(displayTwo('Kembalian', number(data.cash - data.sales), separator))
+            printer.text(separator)
+            printer.text(`Tgl. ${moment(data.createdAt).format('DD MMMM YYYY, HH:mm:ss')}`)
+            printer.text(line)
+            printer.text('Kritik & Saran: 0813-9806-6633')
+            printer.text('')
+            printer.cut().close()
+        })
+        return res.json({ status: true, result: 'Cetak Berhasil' })
+    } catch (error) {
+        console.log(error)
+        res.json({ status: false, message: 'Printer tidak terhubung!' })
+    }
+}
+
 const post = (uri, body) => {
     return new Promise((resolve, reject) => {
         const url = 'https://prod.dahanta.co.id'
@@ -351,4 +403,4 @@ const number = (x) => {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-module.exports = { printing, printingClerk, prepaid, postpaid }
+module.exports = { printing, printingClerk, prepaid, postpaid, transfer }
