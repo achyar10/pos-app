@@ -47,6 +47,7 @@ const Transfer = (props) => {
         try {
             setDisabled(true)
             const body = {
+                no_trans: localStorage.getItem('bankInv'),
                 account_number: obj.account_number,
                 account_name: obj.account_name,
                 bank_code: obj.bank_code,

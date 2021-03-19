@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import pulsa from '../../assets/img/pulsa.png'
 import pln from '../../assets/img/pln.png'
@@ -28,6 +28,8 @@ import Emoney from './ppob/Emoney'
 import History from './ppob/History'
 import Smart from './ppob/Smart'
 import Transfer from './ppob/Transfer'
+import { ppobInvUrl, bankInvUrl } from '../../Endpoint'
+import { Alert, fetchGet } from '../../helpers'
 
 const PPOB = (props) => {
 
@@ -48,6 +50,26 @@ const PPOB = (props) => {
     const [showHistory, setHistory] = useState(false)
     const [showSmart, setSmart] = useState(false)
     const [showTransfer, setTransfer] = useState(false)
+
+    useEffect(() => {
+        const lastInv = async () => {
+            try {
+                const hit = await Promise.all([
+                    fetchGet(ppobInvUrl),
+                    fetchGet(bankInvUrl),
+                ])
+                if (hit.length === 2) {
+                    localStorage.setItem('ppobInv', hit[0].data)
+                    localStorage.setItem('bankInv', hit[1].data)
+                } else {
+                    Alert('Server timeout!')
+                }
+            } catch (error) {
+                Alert('Server timeout!')
+            }
+        }
+        if (!localStorage.getItem('ppobInv') && !localStorage.getItem('bankInv')) lastInv()
+    })
 
     const handleShowPulsa = () => {
         setPulsa(true)
@@ -168,6 +190,8 @@ const PPOB = (props) => {
     }
 
     const handleShowHistory = () => {
+        localStorage.removeItem('ppobInv')
+        localStorage.removeItem('bankInv')
         setFetch(true)
         setHistory(true)
         setModal(true)
@@ -344,8 +368,8 @@ const PPOB = (props) => {
             <Esamsat show={showEsamsat} close={handleCloseEsamsat} fetching={fetch} />
             <Pbb show={showPbb} close={handleClosePbb} fetching={fetch} />
             <History show={showHistory} close={handleCloseHistory} fetching={fetch} />
-            <Smart show={showSmart} close={handleCloseSmart}/>
-            <Transfer show={showTransfer} close={handleCloseTransfer} fetching={fetch}/>
+            <Smart show={showSmart} close={handleCloseSmart} />
+            <Transfer show={showTransfer} close={handleCloseTransfer} fetching={fetch} />
         </div>
     )
 }

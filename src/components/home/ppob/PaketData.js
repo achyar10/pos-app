@@ -36,6 +36,7 @@ const PaketData = (props) => {
         try {
             setDisabled(true)
             const body = {
+                refId: localStorage.getItem('ppobInv'),
                 hp: hp,
                 code: obj.pulsa_code,
                 operator: obj.pulsa_op,

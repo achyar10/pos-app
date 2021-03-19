@@ -54,7 +54,7 @@ const Telkom = (props) => {
     const inquiry = async () => {
         try {
             setDisabled(true)
-            const hit = await fetchPost(postpaidInquiry, { code: 'TELKOMPSTN', hp: hp })
+            const hit = await fetchPost(postpaidInquiry, { refId: localStorage.getItem('ppobInv'),code: 'TELKOMPSTN', hp: hp })
             if (hit.status) {
                 setObj(hit.data)
             } else {

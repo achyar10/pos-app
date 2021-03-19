@@ -41,7 +41,7 @@ const Home = (props) => {
     const handleShow4 = () => setShow4(true)
     const handleShow5 = () => setShow5(true)
     const handleShow6 = () => setShow6(true)
-    const handleShow7 = () => setShow7(true)
+    const handleShow7 = async () => setShow7(true)
     const handleModalProduct = () => handleShow()
     const handleModalProduct2 = () => handleShow2()
     const handleModalProduct3 = () => handleShow3()

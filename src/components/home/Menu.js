@@ -5,10 +5,10 @@ import product from '../../assets/img/product.png'
 import open from '../../assets/img/open.png'
 import clerek from '../../assets/img/clerek.png'
 import ppob from '../../assets/img/ecommerce.png'
-import { numberFormat, reduce, printing, fetchPost, fetchPut, cleanSeparator, Alert } from '../../helpers'
+import { numberFormat, reduce, printing, fetchGet, fetchPost, fetchPut, cleanSeparator, Alert } from '../../helpers'
 import { Modal, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
-import { transUrl, smartMemberUrl, scanVoucherUrl, payVoucherUrl, qrisSnap, qrisWaiting } from '../../Endpoint'
+import { transUrl, smartMemberUrl, scanVoucherUrl, payVoucherUrl, qrisSnap, qrisWaiting, lastInvUrl } from '../../Endpoint'
 import { useDispatch } from 'react-redux'
 import QRCode from 'react-qr-code'
 import NumberFormat from 'react-number-format';
@@ -42,7 +42,7 @@ const Menu = (props) => {
     let pecahan = [500, 1000, 2000, 5000, 10000, 20000, 50000, 100000]
 
     useEffect(() => {
-
+        // if (!localStorage.getItem('lastInv')) lastInv()
     }, [pay, transId, partials, intervalId])
 
     const handleClose = () => {
@@ -55,7 +55,21 @@ const Menu = (props) => {
     }
     const handleShow = () => setShow(true)
 
-    const handlePay = () => {
+    const lastInv = async () => {
+        try {
+            const { data, status, message } = await fetchGet(lastInvUrl)
+            if (status) {
+                localStorage.setItem('lastInv', data)
+            } else {
+                Alert(message)
+            }
+        } catch (error) {
+            Alert('Server timeout!')
+        }
+    }
+
+    const handlePay = async () => {
+        await lastInv()
         if (data.sub_total > 0) {
             handleShow()
             if (data.sub_total > 100000) {
@@ -148,6 +162,7 @@ const Menu = (props) => {
                 })
             });
             const snap = {
+                no_trans: localStorage.getItem('lastInv'),
                 memberId: (member) ? member.memberId : null,
                 member_no: (member) ? member.member_no : null,
                 member_fullname: (member) ? member.member_fullname : null,
@@ -155,7 +170,7 @@ const Menu = (props) => {
                 payment_method: (partials.length > 0) ? 'PARTIAL' : pay,
                 cash: (pay === 'CASH' || pay === 'VOUCHER') ? cash : 0,
                 sedekah, bank, ccno: debit, code,
-                items: details, partials, 
+                items: details, partials,
                 qrisId: idQris
             }
             if (member) {
@@ -300,6 +315,7 @@ const Menu = (props) => {
         dispatch({ type: 'HOLD', payload: false })
         dispatch({ type: 'TRANS', payload: [] })
         dispatch({ type: 'MEMBER', payload: null })
+        localStorage.removeItem('lastInv')
     }
 
     function right(str, chr) {

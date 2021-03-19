@@ -56,7 +56,7 @@ const Bpjs = (props) => {
     const inquiry = async () => {
         try {
             setDisabled(true)
-            const hit = await fetchPost(postpaidInquiry, { code: operator, hp: hp, period: bulan, })
+            const hit = await fetchPost(postpaidInquiry, { refId: localStorage.getItem('ppobInv'),code: operator, hp: hp, period: bulan, })
             if (hit.status) {
                 setObj(hit.data)
             } else {
