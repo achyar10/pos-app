@@ -1,6 +1,7 @@
 {
   "name": "dahanta-pos",
-  "version": "3.1.6",
+  "productName": "Dahanta POS",
+  "version": "3.1.7",
   "description": "POS App React JS",
   "author": "Achyar Anshorie",
   "build": {
@@ -51,6 +52,7 @@
     "react-scripts": "3.4.1",
     "react-table": "^7.2.1",
     "redux": "^4.0.5",
+    "request": "^2.88.2",
     "sweetalert2": "^9.17.0",
     "usb": "^1.6.3"
   },
@@ -59,8 +61,8 @@
     "build-react": "react-scripts build",
     "test-react": "react-scripts test --env=jsdom",
     "eject-react": "react-scripts eject",
-    "build-electron": "electron-builder -w",
-    "build": "npm run build-react && npm run build-electron",
+    "build-win": "npm run build-react && electron-builder -w",
+    "build-mac": "npm run build-react && electron-builder -m",
     "start": "concurrently \"cross-env BROWSER=none npm run start-react\" \"wait-on http://localhost:3000 && electron .\""
   },
   "eslintConfig": {
@@ -82,6 +84,7 @@
     "concurrently": "^5.2.0",
     "electron": "^10.1.5",
     "electron-builder": "^22.7.0",
+    "electron-packager": "^15.4.0",
     "electron-rebuild": "^2.3.2",
     "wait-on": "^5.1.0"
   }

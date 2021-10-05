@@ -76,10 +76,16 @@ export const printing = async (transactionId) => {
             headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
         }
         const hit = await axios.post(printStruk, { transactionId, paper }, config)
-        if (hit.data.status) {
-            Warning(hit.data.result)
+        const { status, message, result } = hit.data
+        if (status) {
+            Warning(result)
         } else {
-            Warning(hit.data.message)
+            if (message) {
+                Warning(hit.data.message)
+            } else {
+                console.log(hit.data)
+                Warning('Cetak Gagal!')
+            }
         }
     } catch (error) {
         console.log(error)
@@ -93,10 +99,16 @@ export const printingClerk = async (clerkId) => {
             headers: { Authorization: `Bearer ${localStorage.getItem('authJwt')}` }
         }
         const hit = await axios.post(printClerk, { clerkId }, config)
-        if (hit.data.status) {
-            Warning(hit.data.result)
+        const { status, message, result } = hit.data
+        if (status) {
+            Warning(result)
         } else {
-            Warning(hit.data.message)
+            if (message) {
+                Warning(hit.data.message)
+            } else {
+                console.log(hit.data)
+                Warning('Cetak Gagal!')
+            }
         }
     } catch (error) {
         console.log(error)

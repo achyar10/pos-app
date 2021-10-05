@@ -1,7 +1,7 @@
 const moment = require('moment')
 const escpos = require('escpos')
 const Axios = require("axios")
-const https = require('https')
+const request = require('request')
 escpos.USB = require('escpos-usb')
 moment.locale('id')
 require('dotenv').config()
@@ -374,19 +374,25 @@ const transfer = (req, res) => {
 
 const post = (uri, body) => {
     return new Promise((resolve, reject) => {
-        const url = 'https://prod.dahanta.co.id'
-
-        const agent = new https.Agent({
-            rejectUnauthorized: false
-        });
-        Axios.post(`${url}/${uri}`, body, { httpsAgent: agent, headers: { 'User-Agent': 'POS-DAHANTA' } })
-            .then((res) => {
-                resolve(res.data)
-            })
-            .catch((err) => {
-                console.log('Server Printer Timeout')
-                reject(err)
-            })
+        const url = `https://prod.dahanta.co.id/${uri}`
+        const options = {
+            url: url,
+            method: 'POST',
+            body: JSON.stringify(body),
+            rejectUnauthorized: false,
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }
+        request(options, (error, response, data) => {
+            if (error) {
+                console.log(error)
+                return reject(error);
+            }
+            const result = JSON.parse(data)
+            console.log(result)
+            return resolve(result);
+        })
     })
 }
 
